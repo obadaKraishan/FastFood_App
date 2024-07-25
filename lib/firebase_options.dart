@@ -50,7 +50,7 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyB-PTzjyRCf2nc1eUQnzT-NkdKFuM-uYig',
+    apiKey: '#',
     appId: '1:823605806677:android:b9313da2af73ee9f5136dc',
     messagingSenderId: '823605806677',
     projectId: 'fastfood-app-a9907',
@@ -58,7 +58,7 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDjpGUkVPRRREmbNR3tAs6csdkD7vNnnNI',
+    apiKey: '#',
     appId: '1:823605806677:ios:ed3afa1978a92ca35136dc',
     messagingSenderId: '823605806677',
     projectId: 'fastfood-app-a9907',
