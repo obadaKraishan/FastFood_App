@@ -4,25 +4,58 @@ class OnboardingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/images/onboarding/delivery_person.png'),
-            Text(
-              "Choose Your Best Delicious Food Only!",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            Expanded(
+              child: Image.asset('assets/images/onboarding/onboarding-bg.png'),
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushReplacementNamed(context, '/home');
-              },
-              child: Text("Get Started"),
+            Text(
+              "Choose Your Best Delicious Food Only!",
+              style: TextStyle(
+                fontSize: 40,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+              textAlign: TextAlign.center,
             ),
+            SizedBox(height: 10),
+            Text(
+              "Don't worry we are here to give the best to save your hunger problem.",
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.white70,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 40),
+            Container(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/home');
+                },
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white, backgroundColor: Colors.red, // foreground (text) color
+                  padding: EdgeInsets.symmetric(vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                ),
+                child: Text(
+                  "Get Started",
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
+            ),
+            SizedBox(height: 40), // Add some spacing at the bottom
           ],
         ),
       ),
+      backgroundColor: Color(0xFF1C1C1C), // Dark background color
     );
   }
 }

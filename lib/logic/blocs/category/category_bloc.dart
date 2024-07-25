@@ -2,29 +2,34 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'category_event.dart';
 import 'category_state.dart';
 import 'package:fastfood_app/data/repositories/category_repository.dart';
-import 'package:fastfood_app/data/models/category_model.dart';
 
 class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   final CategoryRepository _categoryRepository;
 
   CategoryBloc({required CategoryRepository categoryRepository})
       : _categoryRepository = categoryRepository,
-        super(CategoryInitial());
+        super(CategoryInitial()) {
+    on<LoadCategories>(_onLoadCategories);
+    on<AddCategory>(_onAddCategory);
+  }
 
-  @override
-  Stream<CategoryState> mapEventToState(CategoryEvent event) async* {
-    if (event is AddCategory) {
-      yield* _mapAddCategoryToState(event);
+  void _onLoadCategories(LoadCategories event, Emitter<CategoryState> emit) async {
+    emit(CategoryLoading());
+    try {
+      final categoriesStream = _categoryRepository.getCategories();
+      emit(CategoryLoaded(categories: categoriesStream));
+    } catch (_) {
+      emit(CategoryError());
     }
   }
 
-  Stream<CategoryState> _mapAddCategoryToState(AddCategory event) async* {
+  void _onAddCategory(AddCategory event, Emitter<CategoryState> emit) async {
     try {
-      yield CategoryLoading();
+      emit(CategoryLoading());
       await _categoryRepository.addCategory(event.category);
-      yield CategoryAdded();
+      emit(CategoryAdded());
     } catch (_) {
-      yield CategoryError();
+      emit(CategoryError());
     }
   }
 }
