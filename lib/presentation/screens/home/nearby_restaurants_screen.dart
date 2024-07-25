@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
-class CartScreen extends StatelessWidget {
+class NearbyRestaurantsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cart'),
+        title: Text('Nearby Restaurants'),
       ),
       body: ListView(
         children: [
-          // List of items in the cart
+          // List of nearby restaurants
         ],
       ),
     );
