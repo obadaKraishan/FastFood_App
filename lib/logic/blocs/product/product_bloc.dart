@@ -14,6 +14,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     on<LoadProduct>(_onLoadProduct);
     on<AddProduct>(_onAddProduct);
     on<LoadProductsByCategory>(_onLoadProductsByCategory);
+    on<SearchProducts>(_onSearchProducts); // Add this line
   }
 
   void _onLoadProducts(LoadProducts event, Emitter<ProductState> emit) async {
@@ -51,6 +52,18 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       emit(ProductLoading());
       await _productRepository.addProduct(event.product);
       emit(ProductAdded());
+    } catch (_) {
+      emit(ProductError());
+    }
+  }
+
+  void _onSearchProducts(SearchProducts event, Emitter<ProductState> emit) async {
+    emit(ProductLoading());
+    try {
+      final productsStream = _productRepository.getProducts();
+      final filteredProductsStream = productsStream.map((products) =>
+          products.where((product) => product.name.toLowerCase().contains(event.query.toLowerCase())).toList());
+      emit(ProductLoaded(products: filteredProductsStream));
     } catch (_) {
       emit(ProductError());
     }

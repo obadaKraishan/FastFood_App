@@ -35,3 +35,12 @@ class LoadProductsByCategory extends ProductEvent {
   @override
   List<Object> get props => [categoryId];
 }
+
+class SearchProducts extends ProductEvent {
+  final String query;
+
+  SearchProducts({required this.query});
+
+  @override
+  List<Object> get props => [query];
+}
