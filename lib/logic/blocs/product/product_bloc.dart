@@ -13,6 +13,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     on<LoadProducts>(_onLoadProducts);
     on<LoadProduct>(_onLoadProduct);
     on<AddProduct>(_onAddProduct);
+    on<LoadProductsByCategory>(_onLoadProductsByCategory);
   }
 
   void _onLoadProducts(LoadProducts event, Emitter<ProductState> emit) async {
@@ -30,6 +31,16 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     try {
       final product = await _productRepository.getProductById(event.productId);
       emit(ProductLoaded(product: product));
+    } catch (_) {
+      emit(ProductError());
+    }
+  }
+
+  void _onLoadProductsByCategory(LoadProductsByCategory event, Emitter<ProductState> emit) async {
+    emit(ProductLoading());
+    try {
+      final productsStream = _productRepository.getProductsByCategory(event.categoryId);
+      emit(ProductLoaded(products: productsStream));
     } catch (_) {
       emit(ProductError());
     }

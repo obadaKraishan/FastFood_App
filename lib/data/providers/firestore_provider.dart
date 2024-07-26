@@ -49,6 +49,18 @@ class FirestoreProvider {
     });
   }
 
+  Stream<List<ProductModel>> getProductsByCategory(String categoryId) {
+    return _firestore
+        .collection('products')
+        .where('categoryId', isEqualTo: categoryId)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return ProductModel.fromMap(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
   Future<ProductModel> getProductById(String productId) async {
     final doc = await _firestore.collection('products').doc(productId).get();
     return ProductModel.fromMap(doc.data() as Map<String, dynamic>);

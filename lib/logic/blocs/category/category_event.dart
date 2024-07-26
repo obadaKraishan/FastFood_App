@@ -1,3 +1,4 @@
+// lib/logic/blocs/category/category_event.dart
 import 'package:equatable/equatable.dart';
 import 'package:fastfood_app/data/models/category_model.dart';
 

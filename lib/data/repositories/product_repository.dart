@@ -27,4 +27,8 @@ class ProductRepository {
   Future<ProductModel> getProductById(String productId) async {
     return await _firestoreProvider.getProductById(productId);
   }
+
+  Stream<List<ProductModel>> getProductsByCategory(String categoryId) {
+    return _firestoreProvider.getProductsByCategory(categoryId);
+  }
 }

@@ -1,3 +1,4 @@
+import 'package:fastfood_app/presentation/screens/products/products_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fastfood_app/presentation/screens/onboarding/onboarding_screen.dart';
 import 'package:fastfood_app/presentation/screens/home/home_screen.dart';
@@ -32,6 +33,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => CartScreen());
       case '/payment':
         return MaterialPageRoute(builder: (_) => PaymentScreen());
+      case '/products': // Add the route for the new screen
+        return MaterialPageRoute(builder: (_) => ProductsScreen());
       case '/product-details':
         final productId = settings.arguments as String;
         return MaterialPageRoute(builder: (_) => ProductDetailsScreen(productId: productId));
