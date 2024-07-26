@@ -1,3 +1,4 @@
+// lib/logic/blocs/category/category_state.dart
 import 'package:equatable/equatable.dart';
 import 'package:fastfood_app/data/models/category_model.dart';
 
@@ -15,7 +16,7 @@ class CategoryAdded extends CategoryState {}
 class CategoryError extends CategoryState {}
 
 class CategoryLoaded extends CategoryState {
-  final Stream<List<CategoryModel>> categories;
+  final List<CategoryModel> categories;
 
   CategoryLoaded({required this.categories});
 

@@ -1,3 +1,4 @@
+import 'package:fastfood_app/presentation/screens/categories/categories_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fastfood_app/presentation/screens/home/category_screen.dart';
 import 'package:fastfood_app/presentation/screens/home/popular_screen.dart';

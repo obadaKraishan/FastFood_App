@@ -37,7 +37,7 @@ class AppRouter {
       case '/products': // Add the route for the new screen
         return MaterialPageRoute(builder: (_) => ProductsScreen());
       case '/categories': // Add the route for the new screen
-        return MaterialPageRoute(builder: (_) => CategoryScreen());
+        return MaterialPageRoute(builder: (_) => CategoriesScreen());
       case '/product-details':
         final productId = settings.arguments as String;
         return MaterialPageRoute(builder: (_) => ProductDetailsScreen(productId: productId));

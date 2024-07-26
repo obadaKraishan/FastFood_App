@@ -3,23 +3,26 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'category_event.dart';
 import 'category_state.dart';
 import 'package:fastfood_app/data/repositories/category_repository.dart';
+import 'package:fastfood_app/data/models/category_model.dart';
 
 class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   final CategoryRepository _categoryRepository;
+  List<CategoryModel> _allCategories = [];
 
   CategoryBloc({required CategoryRepository categoryRepository})
       : _categoryRepository = categoryRepository,
         super(CategoryInitial()) {
     on<LoadCategories>(_onLoadCategories);
     on<AddCategory>(_onAddCategory);
-    on<SearchCategories>(_onSearchCategories); // Add this line
+    on<SearchCategories>(_onSearchCategories);
   }
 
   void _onLoadCategories(LoadCategories event, Emitter<CategoryState> emit) async {
     emit(CategoryLoading());
     try {
-      final categoriesStream = _categoryRepository.getCategories();
-      emit(CategoryLoaded(categories: categoriesStream));
+      final categories = await _categoryRepository.getCategories().first;
+      _allCategories = categories;
+      emit(CategoryLoaded(categories: categories));
     } catch (_) {
       emit(CategoryError());
     }
@@ -29,21 +32,19 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
     try {
       emit(CategoryLoading());
       await _categoryRepository.addCategory(event.category);
-      emit(CategoryAdded());
+      final categories = await _categoryRepository.getCategories().first;
+      _allCategories = categories;
+      emit(CategoryLoaded(categories: categories));
     } catch (_) {
       emit(CategoryError());
     }
   }
 
-  void _onSearchCategories(SearchCategories event, Emitter<CategoryState> emit) async {
-    emit(CategoryLoading());
-    try {
-      final categoriesStream = _categoryRepository.getCategories();
-      final filteredCategoriesStream = categoriesStream.map((categories) =>
-          categories.where((category) => category.name.toLowerCase().contains(event.query.toLowerCase())).toList());
-      emit(CategoryLoaded(categories: filteredCategoriesStream));
-    } catch (_) {
-      emit(CategoryError());
-    }
+  void _onSearchCategories(SearchCategories event, Emitter<CategoryState> emit) {
+    final query = event.query.toLowerCase();
+    final filteredCategories = _allCategories.where((category) {
+      return category.name.toLowerCase().contains(query);
+    }).toList();
+    emit(CategoryLoaded(categories: filteredCategories));
   }
 }
