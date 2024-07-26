@@ -39,9 +39,21 @@ class CategoryScreen extends StatelessWidget {
                         child: Column(
                           children: [
                             CircleAvatar(
-                              radius: 35, // Increased radius for better visibility
-                              backgroundImage: NetworkImage(category.imageUrl),
+                              radius: 40,
                               backgroundColor: Colors.white,
+                              child: ClipOval(
+                                child: Container(
+                                  width: 80.0, // 2 * radius
+                                  height: 80.0, // 2 * radius
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    image: DecorationImage(
+                                      image: NetworkImage(category.imageUrl),
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
                             SizedBox(height: 8),
                             Text(
