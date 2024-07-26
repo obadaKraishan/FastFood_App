@@ -47,7 +47,7 @@ class PopularScreen extends StatelessWidget {
                           child: Container(
                             width: 200,
                             decoration: BoxDecoration(
-                              color: Color(0xFF333333),
+                              color: Color(0xFF2A313F),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Column(

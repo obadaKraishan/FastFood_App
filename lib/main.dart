@@ -6,7 +6,7 @@ import 'package:fastfood_app/data/providers/firestore_provider.dart';
 import 'package:fastfood_app/data/repositories/category_repository.dart';
 import 'package:fastfood_app/config/app_router.dart';
 import 'package:fastfood_app/config/theme.dart';
-import 'package:fastfood_app/presentation/screens/home/home_screen.dart';
+import 'package:fastfood_app/presentation/widgets/custom_bottom_navigation_bar.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
         title: 'Food Delivery App',
         theme: appTheme,
         onGenerateRoute: _appRouter.generateRoute,
-        initialRoute: '/',
+        home: CustomBottomNavigationBar(),
       ),
     );
   }
