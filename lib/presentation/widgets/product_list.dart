@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fastfood_app/logic/blocs/product/product_bloc.dart';
 import 'package:fastfood_app/logic/blocs/product/product_event.dart';
 import 'package:fastfood_app/logic/blocs/product/product_state.dart';
+import 'package:fastfood_app/presentation/widgets/product_list_item.dart';
 
 class ProductList extends StatelessWidget {
   @override
@@ -34,11 +35,7 @@ class ProductList extends StatelessWidget {
                   itemCount: products.length,
                   itemBuilder: (context, index) {
                     final product = products[index];
-                    return ListTile(
-                      leading: Image.network(product.imageUrl, fit: BoxFit.cover),
-                      title: Text(product.name, style: TextStyle(color: Colors.white)),
-                      subtitle: Text('\$${product.price}', style: TextStyle(color: Colors.white70)),
-                    );
+                    return ProductListItem(product: product);
                   },
                 );
               }

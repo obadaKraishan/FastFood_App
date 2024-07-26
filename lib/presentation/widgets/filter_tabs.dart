@@ -7,7 +7,14 @@ import 'package:fastfood_app/logic/blocs/product/product_bloc.dart';
 import 'package:fastfood_app/logic/blocs/product/product_event.dart';
 import 'package:fastfood_app/data/models/category_model.dart';
 
-class FilterTabs extends StatelessWidget {
+class FilterTabs extends StatefulWidget {
+  @override
+  _FilterTabsState createState() => _FilterTabsState();
+}
+
+class _FilterTabsState extends State<FilterTabs> {
+  String activeCategoryId = 'all';
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CategoryBloc, CategoryState>(
@@ -31,9 +38,39 @@ class FilterTabs extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            activeCategoryId = 'all';
+                          });
+                          context.read<ProductBloc>().add(LoadProducts());
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.category,
+                                color: activeCategoryId == 'all' ? Colors.redAccent : Colors.white,
+                                size: 24,
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                'All',
+                                style: TextStyle(
+                                  color: activeCategoryId == 'all' ? Colors.redAccent : Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                       for (var category in categories)
                         GestureDetector(
                           onTap: () {
+                            setState(() {
+                              activeCategoryId = category.id;
+                            });
                             context.read<ProductBloc>().add(
                               LoadProductsByCategory(categoryId: category.id),
                             );
@@ -42,9 +79,18 @@ class FilterTabs extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(horizontal: 8.0),
                             child: Column(
                               children: [
-                                Icon(Icons.category, color: Colors.white, size: 24), // Use appropriate icons
+                                Icon(
+                                  Icons.category,
+                                  color: activeCategoryId == category.id ? Colors.redAccent : Colors.white,
+                                  size: 24,
+                                ),
                                 SizedBox(height: 4),
-                                Text(category.name, style: TextStyle(color: Colors.white)),
+                                Text(
+                                  category.name,
+                                  style: TextStyle(
+                                    color: activeCategoryId == category.id ? Colors.redAccent : Colors.white,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
