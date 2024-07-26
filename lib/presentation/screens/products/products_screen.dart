@@ -12,6 +12,10 @@ import 'package:fastfood_app/data/repositories/category_repository.dart';
 import 'package:fastfood_app/data/repositories/product_repository.dart';
 
 class ProductsScreen extends StatelessWidget {
+  final String? categoryId;
+
+  ProductsScreen({this.categoryId});
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -24,7 +28,7 @@ class ProductsScreen extends StatelessWidget {
         BlocProvider(
           create: (context) => ProductBloc(
             productRepository: context.read<ProductRepository>(),
-          )..add(LoadProducts()),
+          )..add(categoryId != null ? LoadProductsByCategory(categoryId: categoryId!) : LoadProducts()),
         ),
       ],
       child: Scaffold(
@@ -40,22 +44,30 @@ class ProductsScreen extends StatelessWidget {
           title: Text('Popular Now', style: TextStyle(color: Colors.white)),
           centerTitle: true,
         ),
-        body: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: CustomSearchBar(),
-            ),
-            SizedBox(height: 10,),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: FilterTabs(),
-            ),
-            SizedBox(height: 10,),
-            Expanded(
-              child: ProductList(),
-            ),
-          ],
+        body: Builder(
+            builder: (context) {
+              return Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: CustomSearchBar(
+                      onSearch: (query) {
+                        context.read<ProductBloc>().add(SearchProducts(query: query));
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 10,),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: FilterTabs(),
+                  ),
+                  SizedBox(height: 10,),
+                  Expanded(
+                    child: ProductList(),
+                  ),
+                ],
+              );
+            }
         ),
       ),
     );

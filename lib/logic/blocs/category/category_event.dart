@@ -17,3 +17,12 @@ class AddCategory extends CategoryEvent {
 }
 
 class LoadCategories extends CategoryEvent {}
+
+class SearchCategories extends CategoryEvent {
+  final String query;
+
+  SearchCategories({required this.query});
+
+  @override
+  List<Object> get props => [query];
+}

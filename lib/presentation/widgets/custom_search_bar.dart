@@ -1,12 +1,12 @@
 // lib/presentation/widgets/custom_search_bar.dart
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fastfood_app/logic/blocs/product/product_bloc.dart';
-import 'package:fastfood_app/logic/blocs/product/product_event.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class CustomSearchBar extends StatelessWidget {
+  final Function(String) onSearch;
   final TextEditingController controller = TextEditingController();
+
+  CustomSearchBar({required this.onSearch});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class CustomSearchBar extends StatelessWidget {
           contentPadding: EdgeInsets.symmetric(vertical: 15),
         ),
         onChanged: (query) {
-          context.read<ProductBloc>().add(SearchProducts(query: query));
+          onSearch(query);
         },
       ),
     );

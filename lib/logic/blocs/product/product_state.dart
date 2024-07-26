@@ -1,3 +1,4 @@
+// lib/logic/blocs/product/product_state.dart
 import 'package:equatable/equatable.dart';
 import 'package:fastfood_app/data/models/product_model.dart';
 

@@ -1,6 +1,6 @@
 // lib/presentation/widgets/product_list.dart
 import 'package:flutter/material.dart';
-import 'package:fastfood_app/data/models/product_model.dart'; // Assume you have this model
+import 'package:fastfood_app/data/models/product_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fastfood_app/logic/blocs/product/product_bloc.dart';
 import 'package:fastfood_app/logic/blocs/product/product_event.dart';

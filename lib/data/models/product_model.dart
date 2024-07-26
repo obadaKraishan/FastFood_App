@@ -7,9 +7,9 @@ class ProductModel extends Equatable {
   final String imageUrl;
   final String description;
   final String categoryId;
-  final double rating; // Ensure this is a double
-  final int reviews; // Ensure this is an int
-  final int calories; // Ensure this is an int
+  final double rating;
+  final int reviews;
+  final int calories;
 
   ProductModel({
     required this.id,
