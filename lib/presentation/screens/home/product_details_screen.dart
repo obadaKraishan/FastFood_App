@@ -1,4 +1,3 @@
-// lib/presentation/screens/home/product_details_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fastfood_app/data/models/product_model.dart';
@@ -6,23 +5,51 @@ import 'package:fastfood_app/data/repositories/product_repository.dart';
 import 'package:fastfood_app/logic/blocs/product/product_bloc.dart';
 import 'package:fastfood_app/logic/blocs/product/product_event.dart';
 import 'package:fastfood_app/logic/blocs/product/product_state.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:fastfood_app/presentation/widgets/quantity_button.dart';
 
-class ProductDetailsScreen extends StatelessWidget {
+class ProductDetailsScreen extends StatefulWidget {
   final String productId;
 
   ProductDetailsScreen({required this.productId});
 
   @override
+  _ProductDetailsScreenState createState() => _ProductDetailsScreenState();
+}
+
+class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
+  int _quantity = 1;
+
+  void _incrementQuantity() {
+    setState(() {
+      _quantity++;
+    });
+  }
+
+  void _decrementQuantity() {
+    if (_quantity > 1) {
+      setState(() {
+        _quantity--;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => ProductBloc(productRepository: context.read<ProductRepository>())
-        ..add(LoadProduct(productId: productId)),
+        ..add(LoadProduct(productId: widget.productId)),
       child: Scaffold(
         backgroundColor: Color(0xFF1C2029), // Dark background color
         appBar: AppBar(
           backgroundColor: Color(0xFF1C2029),
-          title: Text('Product Details'),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          title: Text('Product Details', style: TextStyle(color: Colors.white)),
+          centerTitle: true,
         ),
         body: BlocBuilder<ProductBloc, ProductState>(
           builder: (context, state) {
@@ -42,8 +69,8 @@ class ProductDetailsScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10),
                           child: Image.network(
                             product.imageUrl,
-                            height: 250,
-                            fit: BoxFit.cover,
+                            height: 380,
+                            fit: BoxFit.contain,
                           ),
                         ),
                       ),
@@ -58,7 +85,7 @@ class ProductDetailsScreen extends StatelessWidget {
                         children: [
                           Text(
                             '\$${product.price.toStringAsFixed(2)}',
-                            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
                           ),
                           Row(
                             children: List.generate(5, (index) {
@@ -78,34 +105,42 @@ class ProductDetailsScreen extends StatelessWidget {
                       SizedBox(height: 16),
                       Text(
                         product.description,
-                        style: TextStyle(fontSize: 16, color: Colors.white70),
+                        style: TextStyle(fontSize: 22, color: Colors.white70),
                       ),
                       SizedBox(height: 16),
-                      Text(
-                        'Nutritional value per 120gm',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                      ),
-                      SizedBox(height: 8),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('1.98', style: TextStyle(fontSize: 16, color: Colors.white70)),
-                          Text('15.22', style: TextStyle(fontSize: 16, color: Colors.white70)),
-                          Text('30.00', style: TextStyle(fontSize: 16, color: Colors.white70)),
-                          Text('8.60', style: TextStyle(fontSize: 16, color: Colors.white70)),
+                          QuantityButton(
+                            icon: Icons.remove,
+                            onPressed: _decrementQuantity,
+                          ),
+                          Text(
+                            '$_quantity',
+                            style: TextStyle(fontSize: 20, color: Colors.white),
+                          ),
+                          QuantityButton(
+                            icon: Icons.add,
+                            onPressed: _incrementQuantity,
+                          ),
                         ],
                       ),
                       SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.redAccent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18.0),
+                      Container(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.redAccent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18.0),
+                            ),
+                            padding: EdgeInsets.symmetric(vertical: 16),
                           ),
-                        ),
-                        child: Center(
-                          child: Text('Add to Cart', style: TextStyle(color: Colors.white)),
+                          child: Text(
+                            'Add to Cart',
+                            style: TextStyle(color: Colors.white, fontSize: 18),
+                          ),
                         ),
                       ),
                     ],
