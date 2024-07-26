@@ -7,6 +7,9 @@ class ProductModel extends Equatable {
   final String imageUrl;
   final String description;
   final String categoryId;
+  final double rating; // Ensure this is a double
+  final int reviews; // Ensure this is an int
+  final int calories; // Ensure this is an int
 
   ProductModel({
     required this.id,
@@ -15,19 +18,25 @@ class ProductModel extends Equatable {
     required this.imageUrl,
     required this.description,
     required this.categoryId,
+    required this.rating,
+    required this.reviews,
+    required this.calories,
   });
 
   @override
-  List<Object> get props => [id, name, price, imageUrl, description, categoryId];
+  List<Object> get props => [id, name, price, imageUrl, description, categoryId, rating, reviews, calories];
 
   factory ProductModel.fromMap(Map<String, dynamic> map) {
     return ProductModel(
       id: map['id'],
       name: map['name'],
-      price: map['price'],
+      price: (map['price'] as num).toDouble(),
       imageUrl: map['imageUrl'],
       description: map['description'],
       categoryId: map['categoryId'],
+      rating: (map['rating'] as num).toDouble(), // Ensure casting to double
+      reviews: (map['reviews'] as num).toInt(), // Ensure casting to int
+      calories: (map['calories'] as num).toInt(), // Ensure casting to int
     );
   }
 
@@ -39,6 +48,9 @@ class ProductModel extends Equatable {
       'imageUrl': imageUrl,
       'description': description,
       'categoryId': categoryId,
+      'rating': rating,
+      'reviews': reviews,
+      'calories': calories,
     };
   }
 }

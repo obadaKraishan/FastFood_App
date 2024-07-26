@@ -1,3 +1,4 @@
+import 'package:fastfood_app/data/repositories/product_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -25,6 +26,9 @@ class MyApp extends StatelessWidget {
         ),
         RepositoryProvider<CategoryRepository>(
           create: (context) => CategoryRepository(firestoreProvider: context.read<FirestoreProvider>()),
+        ),
+        RepositoryProvider<ProductRepository>(
+          create: (context) => ProductRepository(firestoreProvider: context.read<FirestoreProvider>()),
         ),
       ],
       child: MaterialApp(
