@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fastfood_app/logic/blocs/category/category_bloc.dart';
 import 'package:fastfood_app/logic/blocs/category/category_event.dart';
 import 'package:fastfood_app/logic/blocs/category/category_state.dart';
+import 'package:fastfood_app/presentation/screens/products/products_screen.dart';
 
 class CategoryScreen extends StatelessWidget {
   @override
@@ -26,33 +27,43 @@ class CategoryScreen extends StatelessWidget {
                 itemCount: categories.length,
                 itemBuilder: (context, index) {
                   final category = categories[index];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Column(
-                      children: [
-                        CircleAvatar(
-                          radius: 40,
-                          backgroundColor: Colors.white,
-                          child: ClipOval(
-                            child: Container(
-                              width: 80.0, // 2 * radius
-                              height: 80.0, // 2 * radius
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  image: NetworkImage(category.imageUrl),
-                                  fit: BoxFit.contain,
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProductsScreen(categoryId: category.id),
+                        ),
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 40,
+                            backgroundColor: Colors.white,
+                            child: ClipOval(
+                              child: Container(
+                                width: 80.0, // 2 * radius
+                                height: 80.0, // 2 * radius
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                    image: NetworkImage(category.imageUrl),
+                                    fit: BoxFit.contain,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          category.name,
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ],
+                          SizedBox(height: 8),
+                          Text(
+                            category.name,
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },
