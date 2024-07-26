@@ -6,6 +6,7 @@ import 'package:fastfood_app/logic/blocs/category/category_state.dart';
 import 'package:fastfood_app/logic/blocs/product/product_bloc.dart';
 import 'package:fastfood_app/logic/blocs/product/product_event.dart';
 import 'package:fastfood_app/data/models/category_model.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class FilterTabs extends StatefulWidget {
   @override
@@ -14,6 +15,20 @@ class FilterTabs extends StatefulWidget {
 
 class _FilterTabsState extends State<FilterTabs> {
   String activeCategoryId = 'all';
+
+  // Mapping category icon names to actual icons
+  final Map<String, IconData> categoryIcons = {
+    'appetizers': FontAwesomeIcons.utensils,
+    'burger': FontAwesomeIcons.hamburger,
+    'chicken': FontAwesomeIcons.drumstickBite,
+    'drinks': FontAwesomeIcons.wineGlassAlt,
+    'pizza': FontAwesomeIcons.pizzaSlice,
+    'shawerma': FontAwesomeIcons.breadSlice,
+    'sushi': FontAwesomeIcons.fish,
+    'sweets': FontAwesomeIcons.iceCream,
+    'salads': FontAwesomeIcons.bowlFood,
+    'all': Icons.category,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +65,7 @@ class _FilterTabsState extends State<FilterTabs> {
                           child: Column(
                             children: [
                               Icon(
-                                Icons.category,
+                                categoryIcons['all'],
                                 color: activeCategoryId == 'all' ? Colors.redAccent : Colors.white,
                                 size: 24,
                               ),
@@ -80,7 +95,7 @@ class _FilterTabsState extends State<FilterTabs> {
                             child: Column(
                               children: [
                                 Icon(
-                                  Icons.category,
+                                  categoryIcons[category.icon] ?? Icons.category,
                                   color: activeCategoryId == category.id ? Colors.redAccent : Colors.white,
                                   size: 24,
                                 ),

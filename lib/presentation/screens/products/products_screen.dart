@@ -46,10 +46,12 @@ class ProductsScreen extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child: CustomSearchBar(),
             ),
+            SizedBox(height: 10,),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: FilterTabs(),
             ),
+            SizedBox(height: 10,),
             Expanded(
               child: ProductList(),
             ),
