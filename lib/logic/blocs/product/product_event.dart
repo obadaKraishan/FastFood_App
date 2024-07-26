@@ -1,3 +1,4 @@
+// lib/logic/blocs/product/product_event.dart
 import 'package:equatable/equatable.dart';
 import 'package:fastfood_app/data/models/product_model.dart';
 
@@ -16,3 +17,12 @@ class AddProduct extends ProductEvent {
 }
 
 class LoadProducts extends ProductEvent {}
+
+class LoadProduct extends ProductEvent {
+  final String productId;
+
+  LoadProduct({required this.productId});
+
+  @override
+  List<Object> get props => [productId];
+}

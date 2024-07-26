@@ -37,29 +37,25 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
             icon: Icon(Icons.home),
             title: Text("Home"),
             selectedColor: Colors.redAccent,
-            unselectedColor: Colors.grey, // Light gray color for inactive icon
-            activeIcon: Icon(Icons.home, color: Colors.redAccent), // White color for active icon
+            unselectedColor: Colors.grey, // Light gray for unselected icons
           ),
           SalomonBottomBarItem(
             icon: Icon(Icons.list),
             title: Text("Orders"),
             selectedColor: Colors.redAccent,
-            unselectedColor: Colors.grey, // Light gray color for inactive icon
-            activeIcon: Icon(Icons.list, color: Colors.white), // White color for active icon
+            unselectedColor: Colors.grey,
           ),
           SalomonBottomBarItem(
             icon: Icon(Icons.shopping_cart),
             title: Text("Cart"),
             selectedColor: Colors.redAccent,
-            unselectedColor: Colors.grey, // Light gray color for inactive icon
-            activeIcon: Icon(Icons.shopping_cart, color: Colors.white), // White color for active icon
+            unselectedColor: Colors.grey,
           ),
           SalomonBottomBarItem(
             icon: Icon(Icons.settings),
             title: Text("Settings"),
             selectedColor: Colors.redAccent,
-            unselectedColor: Colors.grey, // Light gray color for inactive icon
-            activeIcon: Icon(Icons.settings, color: Colors.white), // White color for active icon
+            unselectedColor: Colors.grey,
           ),
         ],
       ),

@@ -5,9 +5,11 @@ import 'package:fastfood_app/presentation/screens/profile/profile_screen.dart';
 import 'package:fastfood_app/presentation/screens/search/search_screen.dart';
 import 'package:fastfood_app/presentation/screens/search/filter_screen.dart';
 import 'package:fastfood_app/presentation/screens/home/popular_screen.dart';
+import 'package:fastfood_app/presentation/screens/home/home_screen.dart';
 import 'package:fastfood_app/presentation/screens/home/nearby_restaurants_screen.dart';
 import 'package:fastfood_app/presentation/screens/cart/cart_screen.dart';
 import 'package:fastfood_app/presentation/screens/payment/payment_screen.dart';
+import 'package:fastfood_app/presentation/screens/home/product_details_screen.dart';
 
 class AppRouter {
   Route<dynamic> generateRoute(RouteSettings settings) {
@@ -30,6 +32,9 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => CartScreen());
       case '/payment':
         return MaterialPageRoute(builder: (_) => PaymentScreen());
+      case '/product-details':
+        final productId = settings.arguments as String;
+        return MaterialPageRoute(builder: (_) => ProductDetailsScreen(productId: productId));
       default:
         return MaterialPageRoute(builder: (_) => OnboardingScreen());
     }

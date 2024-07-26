@@ -1,3 +1,4 @@
+// lib/data/providers/firestore_provider.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fastfood_app/data/models/category_model.dart';
 import 'package:fastfood_app/data/models/product_model.dart';
@@ -46,5 +47,10 @@ class FirestoreProvider {
         return ProductModel.fromMap(doc.data() as Map<String, dynamic>);
       }).toList();
     });
+  }
+
+  Future<ProductModel> getProductById(String productId) async {
+    final doc = await _firestore.collection('products').doc(productId).get();
+    return ProductModel.fromMap(doc.data() as Map<String, dynamic>);
   }
 }

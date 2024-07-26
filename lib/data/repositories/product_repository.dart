@@ -1,3 +1,4 @@
+// lib/data/repositories/product_repository.dart
 import 'package:fastfood_app/data/models/product_model.dart';
 import 'package:fastfood_app/data/providers/firestore_provider.dart';
 
@@ -21,5 +22,9 @@ class ProductRepository {
 
   Stream<List<ProductModel>> getProducts() {
     return _firestoreProvider.getProducts();
+  }
+
+  Future<ProductModel> getProductById(String productId) async {
+    return await _firestoreProvider.getProductById(productId);
   }
 }

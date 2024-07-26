@@ -15,10 +15,21 @@ class ProductAdded extends ProductState {}
 class ProductError extends ProductState {}
 
 class ProductLoaded extends ProductState {
-  final Stream<List<ProductModel>> products;
+  final Stream<List<ProductModel>>? products;
+  final ProductModel? product;
 
-  ProductLoaded({required this.products});
+  ProductLoaded({this.products, this.product});
 
   @override
-  List<Object> get props => [products];
+  List<Object> get props => [products ?? [], product ?? ProductModel(
+    id: '',
+    name: '',
+    price: 0.0,
+    imageUrl: '',
+    description: '',
+    categoryId: '',
+    rating: 0.0,
+    reviews: 0,
+    calories: 0,
+  )];
 }
