@@ -42,7 +42,7 @@ class CategoryScreen extends StatelessWidget {
                         children: [
                           CircleAvatar(
                             radius: 40,
-                            backgroundColor: Colors.white,
+                            backgroundColor: Color(0xFF2A313F),
                             child: ClipOval(
                               child: Container(
                                 width: 80.0, // 2 * radius
