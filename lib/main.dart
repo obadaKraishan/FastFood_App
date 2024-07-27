@@ -1,4 +1,7 @@
 import 'package:fastfood_app/data/repositories/product_repository.dart';
+import 'package:fastfood_app/data/repositories/ingredient_repository.dart';
+import 'package:fastfood_app/data/repositories/addon_repository.dart';
+import 'package:fastfood_app/data/repositories/drink_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -30,6 +33,15 @@ class MyApp extends StatelessWidget {
         RepositoryProvider<ProductRepository>(
           create: (context) => ProductRepository(firestoreProvider: context.read<FirestoreProvider>()),
         ),
+        RepositoryProvider<IngredientRepository>(
+          create: (context) => IngredientRepository(firestoreProvider: context.read<FirestoreProvider>()),
+        ),
+        RepositoryProvider<AddonRepository>(
+          create: (context) => AddonRepository(firestoreProvider: context.read<FirestoreProvider>()),
+        ),
+        RepositoryProvider<DrinkRepository>(
+          create: (context) => DrinkRepository(firestoreProvider: context.read<FirestoreProvider>()),
+        ),
       ],
       child: MaterialApp(
         title: 'Food Delivery App',
@@ -40,3 +52,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+

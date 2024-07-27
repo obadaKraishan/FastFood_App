@@ -1,11 +1,28 @@
+import 'package:fastfood_app/data/repositories/product_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fastfood_app/data/models/product_model.dart';
-import 'package:fastfood_app/data/repositories/product_repository.dart';
+import 'package:fastfood_app/data/models/addon_model.dart';
+import 'package:fastfood_app/data/models/drink_model.dart';
+import 'package:fastfood_app/data/models/ingredient_model.dart';
+import 'package:fastfood_app/data/repositories/addon_repository.dart';
+import 'package:fastfood_app/data/repositories/drink_repository.dart';
+import 'package:fastfood_app/data/repositories/ingredient_repository.dart';
 import 'package:fastfood_app/logic/blocs/product/product_bloc.dart';
 import 'package:fastfood_app/logic/blocs/product/product_event.dart';
 import 'package:fastfood_app/logic/blocs/product/product_state.dart';
+import 'package:fastfood_app/logic/blocs/ingredient/ingredient_bloc.dart';
+import 'package:fastfood_app/logic/blocs/ingredient/ingredient_event.dart';
+import 'package:fastfood_app/logic/blocs/ingredient/ingredient_state.dart';
+import 'package:fastfood_app/logic/blocs/addon/addon_bloc.dart';
+import 'package:fastfood_app/logic/blocs/addon/addon_event.dart';
+import 'package:fastfood_app/logic/blocs/addon/addon_state.dart';
+import 'package:fastfood_app/logic/blocs/drink/drink_bloc.dart';
+import 'package:fastfood_app/logic/blocs/drink/drink_event.dart';
+import 'package:fastfood_app/logic/blocs/drink/drink_state.dart';
 import 'package:fastfood_app/presentation/widgets/quantity_button.dart';
+import 'package:fastfood_app/presentation/widgets/ingredient_checkbox.dart';
+import 'package:fastfood_app/presentation/widgets/addon_checkbox.dart';
+import 'package:fastfood_app/presentation/widgets/drink_checkbox.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   final String productId;
@@ -18,10 +35,15 @@ class ProductDetailsScreen extends StatefulWidget {
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   int _quantity = 1;
+  double _totalPrice = 0.0;
+  List<String> _selectedIngredients = [];
+  List<String> _selectedAddons = [];
+  List<String> _selectedDrinks = [];
 
   void _incrementQuantity() {
     setState(() {
       _quantity++;
+      _updateTotalPrice();
     });
   }
 
@@ -29,15 +51,53 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     if (_quantity > 1) {
       setState(() {
         _quantity--;
+        _updateTotalPrice();
       });
     }
   }
 
+  void _updateTotalPrice() {
+    double price = _basePrice;
+
+    _selectedAddons.forEach((key) {
+      price += _addons.firstWhere((addon) => addon.id == key).price;
+    });
+
+    _selectedDrinks.forEach((key) {
+      price += _drinks.firstWhere((drink) => drink.id == key).price;
+    });
+
+    setState(() {
+      _totalPrice = price * _quantity;
+    });
+  }
+
+  late double _basePrice;
+  List<IngredientModel> _ingredients = [];
+  List<AddonModel> _addons = [];
+  List<DrinkModel> _drinks = [];
+
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ProductBloc(productRepository: context.read<ProductRepository>())
-        ..add(LoadProduct(productId: widget.productId)),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => ProductBloc(productRepository: context.read<ProductRepository>())
+            ..add(LoadProduct(productId: widget.productId)),
+        ),
+        BlocProvider(
+          create: (context) => IngredientBloc(ingredientRepository: context.read<IngredientRepository>())
+            ..add(LoadIngredientsByProduct(productId: widget.productId)),
+        ),
+        BlocProvider(
+          create: (context) => AddonBloc(addonRepository: context.read<AddonRepository>())
+            ..add(LoadAddonsByProduct(productId: widget.productId)),
+        ),
+        BlocProvider(
+          create: (context) => DrinkBloc(drinkRepository: context.read<DrinkRepository>())
+            ..add(LoadDrinksByProduct(productId: widget.productId)),
+        ),
+      ],
       child: Scaffold(
         backgroundColor: Color(0xFF1C2029), // Dark background color
         appBar: AppBar(
@@ -58,6 +118,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             }
             if (state is ProductLoaded && state.product != null) {
               final product = state.product!;
+              _basePrice = product.price;
+              _totalPrice = _basePrice * _quantity;
               return SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -108,6 +170,123 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         style: TextStyle(fontSize: 22, color: Colors.white70),
                       ),
                       SizedBox(height: 16),
+                      BlocBuilder<IngredientBloc, IngredientState>(
+                        builder: (context, ingredientState) {
+                          print("IngredientState: $ingredientState");
+                          if (ingredientState is IngredientLoading) {
+                            return Center(child: CircularProgressIndicator());
+                          }
+                          if (ingredientState is IngredientLoaded) {
+                            _ingredients = ingredientState.ingredients;
+                            _selectedIngredients = _ingredients
+                                .where((ingredient) => !ingredient.isMandatory)
+                                .map((ingredient) => ingredient.id)
+                                .toList();
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Ingredients',
+                                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                                ),
+                                ..._ingredients.map((ingredient) {
+                                  return IngredientCheckbox(
+                                    ingredient: ingredient,
+                                    isChecked: _selectedIngredients.contains(ingredient.id),
+                                    onChanged: (checked) {
+                                      setState(() {
+                                        if (checked == true) {
+                                          _selectedIngredients.add(ingredient.id);
+                                        } else {
+                                          _selectedIngredients.remove(ingredient.id);
+                                        }
+                                      });
+                                    },
+                                  );
+                                }).toList(),
+                              ],
+                            );
+                          }
+                          return Center(child: Text('Error loading ingredients', style: TextStyle(color: Colors.white)));
+                        },
+                      ),
+                      SizedBox(height: 16),
+                      BlocBuilder<AddonBloc, AddonState>(
+                        builder: (context, addonState) {
+                          print("AddonState: $addonState");
+                          if (addonState is AddonLoading) {
+                            return Center(child: CircularProgressIndicator());
+                          }
+                          if (addonState is AddonLoaded) {
+                            _addons = addonState.addons;
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Add-ons',
+                                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                                ),
+                                ..._addons.map((addon) {
+                                  return AddonCheckbox(
+                                    addon: addon,
+                                    isChecked: _selectedAddons.contains(addon.id),
+                                    onChanged: (checked) {
+                                      setState(() {
+                                        if (checked == true) {
+                                          _selectedAddons.add(addon.id);
+                                        } else {
+                                          _selectedAddons.remove(addon.id);
+                                        }
+                                        _updateTotalPrice();
+                                      });
+                                    },
+                                  );
+                                }).toList(),
+                              ],
+                            );
+                          }
+                          return Center(child: Text('Error loading add-ons', style: TextStyle(color: Colors.white)));
+                        },
+                      ),
+                      SizedBox(height: 16),
+                      BlocBuilder<DrinkBloc, DrinkState>(
+                        builder: (context, drinkState) {
+                          print("DrinkState: $drinkState");
+                          if (drinkState is DrinkLoading) {
+                            return Center(child: CircularProgressIndicator());
+                          }
+                          if (drinkState is DrinkLoaded) {
+                            _drinks = drinkState.drinks;
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Drinks',
+                                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                                ),
+                                ..._drinks.map((drink) {
+                                  return DrinkCheckbox(
+                                    drink: drink,
+                                    isChecked: _selectedDrinks.contains(drink.id),
+                                    onChanged: (checked) {
+                                      setState(() {
+                                        if (checked == true) {
+                                          _selectedDrinks.add(drink.id);
+                                        } else {
+                                          _selectedDrinks.remove(drink.id);
+                                        }
+                                        _updateTotalPrice();
+                                      });
+                                    },
+                                  );
+                                }).toList(),
+                              ],
+                            );
+                          }
+                          return Center(child: Text('Error loading drinks', style: TextStyle(color: Colors.white)));
+                        },
+                      ),
+                      SizedBox(height: 16),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -129,7 +308,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       Container(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            // Add to cart logic
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.redAccent,
                             shape: RoundedRectangleBorder(
@@ -138,7 +319,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             padding: EdgeInsets.symmetric(vertical: 16),
                           ),
                           child: Text(
-                            'Add to Cart',
+                            'Add to Cart (\$${_totalPrice.toStringAsFixed(2)})',
                             style: TextStyle(color: Colors.white, fontSize: 18),
                           ),
                         ),
