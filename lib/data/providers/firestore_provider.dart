@@ -84,23 +84,31 @@ class FirestoreProvider {
   }
 
   Stream<List<DrinkModel>> getDrinksByIds(List<String> drinkIds) {
+    print('Fetching drinks for IDs: $drinkIds');
     return _firestore
         .collection('drinks')
         .where(FieldPath.documentId, whereIn: drinkIds)
         .snapshots()
         .map((snapshot) {
+      print('Drinks fetched: ${snapshot.docs.length}');
       return snapshot.docs.map((doc) {
+        print('Drink: ${doc.data()}');
         return DrinkModel.fromMap(doc.data() as Map<String, dynamic>);
       }).toList();
     });
   }
 
   Stream<List<AddonModel>> getAddonsByIds(List<String> addonIds) {
+    print('Fetching add-ons for IDs: $addonIds');
     return _firestore
         .collection('addons')
         .where(FieldPath.documentId, whereIn: addonIds)
         .snapshots()
         .map((snapshot) {
+      print('Add-ons fetched: ${snapshot.docs.length}');
+      snapshot.docs.forEach((doc) {
+        print('Addon data: ${doc.data()}');
+      });
       return snapshot.docs.map((doc) {
         return AddonModel.fromMap(doc.data() as Map<String, dynamic>);
       }).toList();

@@ -18,7 +18,7 @@ class AddonModel extends Equatable {
     return AddonModel(
       id: map['id'],
       name: map['name'],
-      price: (map['price'] as num).toDouble(),
+      price: (map['price'] is num) ? (map['price'] as num).toDouble() : double.parse(map['price']),
     );
   }
 

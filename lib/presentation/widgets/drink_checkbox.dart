@@ -18,7 +18,6 @@ class DrinkCheckbox extends StatelessWidget {
     return CheckboxListTile(
       title: Row(
         children: [
-          Image.network(drink.imageUrl, height: 40, width: 40),
           SizedBox(width: 8),
           Text(drink.name, style: TextStyle(color: Colors.white)),
           Spacer(),
