@@ -7,7 +7,7 @@ class DrinkRepository {
   DrinkRepository({required FirestoreProvider firestoreProvider})
       : _firestoreProvider = firestoreProvider;
 
-  Stream<List<DrinkModel>> getDrinksByProduct(String productId) {
-    return _firestoreProvider.getDrinksByProduct(productId);
+  Stream<List<DrinkModel>> getDrinksByIds(List<String> drinkIds) {
+    return _firestoreProvider.getDrinksByIds(drinkIds);
   }
 }

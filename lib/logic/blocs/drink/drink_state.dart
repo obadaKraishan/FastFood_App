@@ -1,4 +1,3 @@
-// lib/logic/blocs/drink/drink_state.dart
 import 'package:equatable/equatable.dart';
 import 'package:fastfood_app/data/models/drink_model.dart';
 

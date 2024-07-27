@@ -7,11 +7,13 @@ abstract class DrinkEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class LoadDrinksByProduct extends DrinkEvent {
-  final String productId;
+class LoadDrinks extends DrinkEvent {}
 
-  const LoadDrinksByProduct({required this.productId});
+class LoadDrinksByProduct extends DrinkEvent {
+  final List<String> drinkIds;
+
+  const LoadDrinksByProduct({required this.drinkIds});
 
   @override
-  List<Object> get props => [productId];
+  List<Object> get props => [drinkIds];
 }

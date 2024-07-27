@@ -1,9 +1,7 @@
-// lib/logic/blocs/product/product_bloc.dart
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'product_event.dart';
 import 'product_state.dart';
 import 'package:fastfood_app/data/repositories/product_repository.dart';
-import 'package:fastfood_app/data/models/product_model.dart';
 
 class ProductBloc extends Bloc<ProductEvent, ProductState> {
   final ProductRepository _productRepository;
@@ -15,7 +13,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     on<LoadProduct>(_onLoadProduct);
     on<AddProduct>(_onAddProduct);
     on<LoadProductsByCategory>(_onLoadProductsByCategory);
-    on<SearchProducts>(_onSearchProducts); // Add this line
+    on<SearchProducts>(_onSearchProducts);
   }
 
   void _onLoadProducts(LoadProducts event, Emitter<ProductState> emit) async {

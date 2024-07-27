@@ -7,11 +7,13 @@ abstract class AddonEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class LoadAddonsByProduct extends AddonEvent {
-  final String productId;
+class LoadAddons extends AddonEvent {}
 
-  const LoadAddonsByProduct({required this.productId});
+class LoadAddonsByProduct extends AddonEvent {
+  final List<String> addonIds;
+
+  const LoadAddonsByProduct({required this.addonIds});
 
   @override
-  List<Object> get props => [productId];
+  List<Object> get props => [addonIds];
 }

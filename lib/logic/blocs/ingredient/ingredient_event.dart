@@ -8,10 +8,10 @@ abstract class IngredientEvent extends Equatable {
 }
 
 class LoadIngredientsByProduct extends IngredientEvent {
-  final String productId;
+  final List<String> ingredientIds;
 
-  const LoadIngredientsByProduct({required this.productId});
+  const LoadIngredientsByProduct({required this.ingredientIds});
 
   @override
-  List<Object> get props => [productId];
+  List<Object> get props => [ingredientIds];
 }

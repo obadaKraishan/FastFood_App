@@ -1,4 +1,3 @@
-// lib/logic/blocs/product/product_state.dart
 import 'package:equatable/equatable.dart';
 import 'package:fastfood_app/data/models/product_model.dart';
 
@@ -22,7 +21,7 @@ class ProductLoaded extends ProductState {
   ProductLoaded({this.products, this.product});
 
   @override
-  List<Object> get props => [products ?? [], product ?? ProductModel(
+  List<Object> get props => [products ?? Stream.empty(), product ?? ProductModel(
     id: '',
     name: '',
     price: 0.0,
@@ -32,5 +31,8 @@ class ProductLoaded extends ProductState {
     rating: 0.0,
     reviews: 0,
     calories: 0,
+    ingredientIds: [],
+    addonIds: [],
+    drinkIds: [],
   )];
 }

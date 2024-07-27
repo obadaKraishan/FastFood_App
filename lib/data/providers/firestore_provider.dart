@@ -68,46 +68,37 @@ class FirestoreProvider {
     return ProductModel.fromMap(doc.data() as Map<String, dynamic>);
   }
 
-  Stream<List<IngredientModel>> getIngredientsByProduct(String productId) {
-    print('Fetching ingredients for product ID: $productId');
+  Stream<List<IngredientModel>> getIngredientsByIds(List<String> ingredientIds) {
     return _firestore
         .collection('ingredients')
-        .where('productIds', arrayContains: productId)
+        .where(FieldPath.documentId, whereIn: ingredientIds)
         .snapshots()
         .map((snapshot) {
-      print('Ingredients fetched: ${snapshot.docs.length}');
       return snapshot.docs.map((doc) {
-        print('Ingredient: ${doc.data()}');
         return IngredientModel.fromMap(doc.data() as Map<String, dynamic>);
       }).toList();
     });
   }
 
-  Stream<List<DrinkModel>> getDrinksByProduct(String productId) {
-    print('Fetching drinks for product ID: $productId');
+  Stream<List<DrinkModel>> getDrinksByIds(List<String> drinkIds) {
     return _firestore
         .collection('drinks')
-        .where('productIds', arrayContains: productId)
+        .where(FieldPath.documentId, whereIn: drinkIds)
         .snapshots()
         .map((snapshot) {
-      print('Drinks fetched: ${snapshot.docs.length}');
       return snapshot.docs.map((doc) {
-        print('Drink: ${doc.data()}');
         return DrinkModel.fromMap(doc.data() as Map<String, dynamic>);
       }).toList();
     });
   }
 
-  Stream<List<AddonModel>> getAddonsByProduct(String productId) {
-    print('Fetching add-ons for product ID: $productId');
+  Stream<List<AddonModel>> getAddonsByIds(List<String> addonIds) {
     return _firestore
         .collection('addons')
-        .where('productIds', arrayContains: productId)
+        .where(FieldPath.documentId, whereIn: addonIds)
         .snapshots()
         .map((snapshot) {
-      print('Add-ons fetched: ${snapshot.docs.length}');
       return snapshot.docs.map((doc) {
-        print('Addon: ${doc.data()}');
         return AddonModel.fromMap(doc.data() as Map<String, dynamic>);
       }).toList();
     });

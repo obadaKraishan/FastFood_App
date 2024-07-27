@@ -15,7 +15,7 @@ class DrinkBloc extends Bloc<DrinkEvent, DrinkState> {
   void _onLoadDrinksByProduct(LoadDrinksByProduct event, Emitter<DrinkState> emit) async {
     emit(DrinkLoading());
     try {
-      final drinks = await _drinkRepository.getDrinksByProduct(event.productId).first;
+      final drinks = await _drinkRepository.getDrinksByIds(event.drinkIds).first;
       emit(DrinkLoaded(drinks: drinks));
     } catch (_) {
       emit(DrinkError());

@@ -1,4 +1,3 @@
-// lib/logic/blocs/ingredient/ingredient_state.dart
 import 'package:equatable/equatable.dart';
 import 'package:fastfood_app/data/models/ingredient_model.dart';
 

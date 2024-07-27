@@ -1,4 +1,3 @@
-// lib/data/repositories/product_repository.dart
 import 'package:fastfood_app/data/models/product_model.dart';
 import 'package:fastfood_app/data/providers/firestore_provider.dart';
 

@@ -15,7 +15,7 @@ class AddonBloc extends Bloc<AddonEvent, AddonState> {
   void _onLoadAddonsByProduct(LoadAddonsByProduct event, Emitter<AddonState> emit) async {
     emit(AddonLoading());
     try {
-      final addons = await _addonRepository.getAddonsByProduct(event.productId).first;
+      final addons = await _addonRepository.getAddonsByIds(event.addonIds).first;
       emit(AddonLoaded(addons: addons));
     } catch (_) {
       emit(AddonError());

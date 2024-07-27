@@ -10,6 +10,9 @@ class ProductModel extends Equatable {
   final double rating;
   final int reviews;
   final int calories;
+  final List<String> ingredientIds;
+  final List<String> addonIds;
+  final List<String> drinkIds;
 
   ProductModel({
     required this.id,
@@ -21,10 +24,15 @@ class ProductModel extends Equatable {
     required this.rating,
     required this.reviews,
     required this.calories,
+    required this.ingredientIds,
+    required this.addonIds,
+    required this.drinkIds,
   });
 
   @override
-  List<Object> get props => [id, name, price, imageUrl, description, categoryId, rating, reviews, calories];
+  List<Object> get props => [
+    id, name, price, imageUrl, description, categoryId, rating, reviews, calories, ingredientIds, addonIds, drinkIds
+  ];
 
   factory ProductModel.fromMap(Map<String, dynamic> map) {
     return ProductModel(
@@ -34,9 +42,12 @@ class ProductModel extends Equatable {
       imageUrl: map['imageUrl'],
       description: map['description'],
       categoryId: map['categoryId'],
-      rating: (map['rating'] as num).toDouble(), // Ensure casting to double
-      reviews: (map['reviews'] as num).toInt(), // Ensure casting to int
-      calories: (map['calories'] as num).toInt(), // Ensure casting to int
+      rating: (map['rating'] as num).toDouble(),
+      reviews: (map['reviews'] as num).toInt(),
+      calories: (map['calories'] as num).toInt(),
+      ingredientIds: List<String>.from(map['ingredientIds']),
+      addonIds: List<String>.from(map['addonIds']),
+      drinkIds: List<String>.from(map['drinkIds']),
     );
   }
 
@@ -51,6 +62,9 @@ class ProductModel extends Equatable {
       'rating': rating,
       'reviews': reviews,
       'calories': calories,
+      'ingredientIds': ingredientIds,
+      'addonIds': addonIds,
+      'drinkIds': drinkIds,
     };
   }
 }

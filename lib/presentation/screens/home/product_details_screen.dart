@@ -1,12 +1,13 @@
-import 'package:fastfood_app/data/repositories/product_repository.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fastfood_app/data/models/addon_model.dart';
 import 'package:fastfood_app/data/models/drink_model.dart';
 import 'package:fastfood_app/data/models/ingredient_model.dart';
 import 'package:fastfood_app/data/repositories/addon_repository.dart';
 import 'package:fastfood_app/data/repositories/drink_repository.dart';
 import 'package:fastfood_app/data/repositories/ingredient_repository.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fastfood_app/data/models/product_model.dart';
+import 'package:fastfood_app/data/repositories/product_repository.dart';
 import 'package:fastfood_app/logic/blocs/product/product_bloc.dart';
 import 'package:fastfood_app/logic/blocs/product/product_event.dart';
 import 'package:fastfood_app/logic/blocs/product/product_state.dart';
@@ -86,16 +87,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             ..add(LoadProduct(productId: widget.productId)),
         ),
         BlocProvider(
-          create: (context) => IngredientBloc(ingredientRepository: context.read<IngredientRepository>())
-            ..add(LoadIngredientsByProduct(productId: widget.productId)),
+          create: (context) => IngredientBloc(ingredientRepository: context.read<IngredientRepository>()),
         ),
         BlocProvider(
-          create: (context) => AddonBloc(addonRepository: context.read<AddonRepository>())
-            ..add(LoadAddonsByProduct(productId: widget.productId)),
+          create: (context) => AddonBloc(addonRepository: context.read<AddonRepository>()),
         ),
         BlocProvider(
-          create: (context) => DrinkBloc(drinkRepository: context.read<DrinkRepository>())
-            ..add(LoadDrinksByProduct(productId: widget.productId)),
+          create: (context) => DrinkBloc(drinkRepository: context.read<DrinkRepository>()),
         ),
       ],
       child: Scaffold(
@@ -120,6 +118,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               final product = state.product!;
               _basePrice = product.price;
               _totalPrice = _basePrice * _quantity;
+
+              context.read<IngredientBloc>().add(LoadIngredientsByProduct(ingredientIds: product.ingredientIds));
+              context.read<AddonBloc>().add(LoadAddonsByProduct(addonIds: product.addonIds));
+              context.read<DrinkBloc>().add(LoadDrinksByProduct(drinkIds: product.drinkIds));
+
               return SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),

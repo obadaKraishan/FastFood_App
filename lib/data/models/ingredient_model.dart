@@ -5,20 +5,16 @@ class IngredientModel extends Equatable {
   final String name;
   final double price;
   final bool isMandatory;
-  final String categoryId;
-  final List<String> productIds; // List of product IDs that use this ingredient
 
   IngredientModel({
     required this.id,
     required this.name,
     required this.price,
     required this.isMandatory,
-    required this.categoryId,
-    required this.productIds, // Initialize the list
   });
 
   @override
-  List<Object> get props => [id, name, price, isMandatory, categoryId, productIds]; // Include productIds
+  List<Object> get props => [id, name, price, isMandatory];
 
   factory IngredientModel.fromMap(Map<String, dynamic> map) {
     return IngredientModel(
@@ -26,8 +22,6 @@ class IngredientModel extends Equatable {
       name: map['name'],
       price: (map['price'] as num).toDouble(),
       isMandatory: map['isMandatory'],
-      categoryId: map['categoryId'],
-      productIds: List<String>.from(map['productIds']), // Parse the list of product IDs
     );
   }
 
@@ -37,8 +31,6 @@ class IngredientModel extends Equatable {
       'name': name,
       'price': price,
       'isMandatory': isMandatory,
-      'categoryId': categoryId,
-      'productIds': productIds, // Include productIds
     };
   }
 }

@@ -7,7 +7,7 @@ class IngredientRepository {
   IngredientRepository({required FirestoreProvider firestoreProvider})
       : _firestoreProvider = firestoreProvider;
 
-  Stream<List<IngredientModel>> getIngredientsByProduct(String productId) {
-    return _firestoreProvider.getIngredientsByProduct(productId);
+  Stream<List<IngredientModel>> getIngredientsByIds(List<String> ingredientIds) {
+    return _firestoreProvider.getIngredientsByIds(ingredientIds);
   }
 }

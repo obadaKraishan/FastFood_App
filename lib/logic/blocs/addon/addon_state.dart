@@ -1,4 +1,3 @@
-// lib/logic/blocs/addon/addon_state.dart
 import 'package:equatable/equatable.dart';
 import 'package:fastfood_app/data/models/addon_model.dart';
 

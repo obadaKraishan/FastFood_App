@@ -15,7 +15,7 @@ class IngredientBloc extends Bloc<IngredientEvent, IngredientState> {
   void _onLoadIngredientsByProduct(LoadIngredientsByProduct event, Emitter<IngredientState> emit) async {
     emit(IngredientLoading());
     try {
-      final ingredients = await _ingredientRepository.getIngredientsByProduct(event.productId).first;
+      final ingredients = await _ingredientRepository.getIngredientsByIds(event.ingredientIds).first;
       emit(IngredientLoaded(ingredients: ingredients));
     } catch (_) {
       emit(IngredientError());

@@ -7,7 +7,7 @@ class AddonRepository {
   AddonRepository({required FirestoreProvider firestoreProvider})
       : _firestoreProvider = firestoreProvider;
 
-  Stream<List<AddonModel>> getAddonsByProduct(String productId) {
-    return _firestoreProvider.getAddonsByProduct(productId);
+  Stream<List<AddonModel>> getAddonsByIds(List<String> addonIds) {
+    return _firestoreProvider.getAddonsByIds(addonIds);
   }
 }
