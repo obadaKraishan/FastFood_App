@@ -69,12 +69,15 @@ class FirestoreProvider {
   }
 
   Stream<List<IngredientModel>> getIngredientsByIds(List<String> ingredientIds) {
+    print('Fetching ingredients for IDs: $ingredientIds');
     return _firestore
         .collection('ingredients')
         .where(FieldPath.documentId, whereIn: ingredientIds)
         .snapshots()
         .map((snapshot) {
+      print('Ingredients fetched: ${snapshot.docs.length}');
       return snapshot.docs.map((doc) {
+        print('Ingredient: ${doc.data()}');
         return IngredientModel.fromMap(doc.data() as Map<String, dynamic>);
       }).toList();
     });

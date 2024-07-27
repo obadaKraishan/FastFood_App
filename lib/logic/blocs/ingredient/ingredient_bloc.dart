@@ -16,8 +16,10 @@ class IngredientBloc extends Bloc<IngredientEvent, IngredientState> {
     emit(IngredientLoading());
     try {
       final ingredients = await _ingredientRepository.getIngredientsByIds(event.ingredientIds).first;
+      print('Fetched Ingredients: $ingredients');
       emit(IngredientLoaded(ingredients: ingredients));
-    } catch (_) {
+    } catch (e) {
+      print('Error loading ingredients: $e');
       emit(IngredientError());
     }
   }
