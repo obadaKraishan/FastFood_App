@@ -41,6 +41,19 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   List<String> _selectedAddons = [];
   List<String> _selectedDrinks = [];
 
+  late double _basePrice;
+  List<IngredientModel> _ingredients = [];
+  List<AddonModel> _addons = [];
+  List<DrinkModel> _drinks = [];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateTotalPrice();
+    });
+  }
+
   void _incrementQuantity() {
     setState(() {
       _quantity++;
@@ -60,23 +73,19 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   void _updateTotalPrice() {
     double price = _basePrice;
 
-    _selectedAddons.forEach((key) {
-      price += _addons.firstWhere((addon) => addon.id == key).price;
-    });
+    for (var addonId in _selectedAddons) {
+      price += _addons.firstWhere((addon) => addon.id == addonId).price;
+    }
 
-    _selectedDrinks.forEach((key) {
-      price += _drinks.firstWhere((drink) => drink.id == key).price;
-    });
+    for (var drinkId in _selectedDrinks) {
+      price += _drinks.firstWhere((drink) => drink.id == drinkId).price;
+    }
 
     setState(() {
       _totalPrice = price * _quantity;
     });
+    print('Total price updated: $_totalPrice');
   }
-
-  late double _basePrice;
-  List<IngredientModel> _ingredients = [];
-  List<AddonModel> _addons = [];
-  List<DrinkModel> _drinks = [];
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +106,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         ),
       ],
       child: Scaffold(
-        backgroundColor: Color(0xFF1C2029), // Dark background color
+        backgroundColor: Color(0xFF1C2029),
         appBar: AppBar(
           backgroundColor: Color(0xFF1C2029),
           leading: IconButton(
@@ -123,211 +132,224 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               context.read<AddonBloc>().add(LoadAddonsByProduct(addonIds: product.addonIds));
               context.read<DrinkBloc>().add(LoadDrinksByProduct(drinkIds: product.drinkIds));
 
-              return SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Center(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Image.network(
-                            product.imageUrl,
-                            height: 380,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      Text(
-                        product.name,
-                        style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
-                      ),
-                      SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            '\$${product.price.toStringAsFixed(2)}',
-                            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
-                          ),
-                          Row(
-                            children: List.generate(5, (index) {
-                              return Icon(
-                                index < product.rating.round() ? Icons.star : Icons.star_border,
-                                color: Colors.yellow,
-                                size: 20,
-                              );
-                            }),
-                          ),
-                          Text(
-                            '(${product.reviews} reviews)',
-                            style: TextStyle(fontSize: 16, color: Colors.white70),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 16),
-                      Text(
-                        product.description,
-                        style: TextStyle(fontSize: 22, color: Colors.white70),
-                      ),
-                      SizedBox(height: 16),
-                      BlocBuilder<IngredientBloc, IngredientState>(
-                        builder: (context, ingredientState) {
-                          print("IngredientState: $ingredientState");
-                          if (ingredientState is IngredientLoading) {
-                            return Center(child: CircularProgressIndicator());
-                          }
-                          if (ingredientState is IngredientLoaded) {
-                            _ingredients = ingredientState.ingredients;
-                            _selectedIngredients = _ingredients
-                                .where((ingredient) => !ingredient.isMandatory)
-                                .map((ingredient) => ingredient.id)
-                                .toList();
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Ingredients',
-                                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
-                                ),
-                                ..._ingredients.map((ingredient) {
-                                  return IngredientCheckbox(
-                                    ingredient: ingredient,
-                                    isChecked: _selectedIngredients.contains(ingredient.id),
-                                    onChanged: (checked) {
-                                      setState(() {
-                                        if (checked == true) {
-                                          _selectedIngredients.add(ingredient.id);
-                                        } else {
-                                          _selectedIngredients.remove(ingredient.id);
-                                        }
-                                      });
-                                    },
-                                  );
-                                }).toList(),
-                              ],
-                            );
-                          }
-                          return Center(child: Text('Error loading ingredients', style: TextStyle(color: Colors.white)));
-                        },
-                      ),
-                      SizedBox(height: 16),
-                      BlocBuilder<AddonBloc, AddonState>(
-                        builder: (context, addonState) {
-                          print("AddonState: $addonState");
-                          if (addonState is AddonLoading) {
-                            return Center(child: CircularProgressIndicator());
-                          }
-                          if (addonState is AddonLoaded) {
-                            _addons = addonState.addons;
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Add-ons',
-                                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
-                                ),
-                                ..._addons.map((addon) {
-                                  return AddonCheckbox(
-                                    addon: addon,
-                                    isChecked: _selectedAddons.contains(addon.id),
-                                    onChanged: (checked) {
-                                      setState(() {
-                                        if (checked == true) {
-                                          _selectedAddons.add(addon.id);
-                                        } else {
-                                          _selectedAddons.remove(addon.id);
-                                        }
-                                        _updateTotalPrice();
-                                      });
-                                    },
-                                  );
-                                }).toList(),
-                              ],
-                            );
-                          }
-                          return Center(child: Text('Error loading add-ons', style: TextStyle(color: Colors.white)));
-                        },
-                      ),
-                      SizedBox(height: 16),
-                      BlocBuilder<DrinkBloc, DrinkState>(
-                        builder: (context, drinkState) {
-                          print("DrinkState: $drinkState");
-                          if (drinkState is DrinkLoading) {
-                            return Center(child: CircularProgressIndicator());
-                          }
-                          if (drinkState is DrinkLoaded) {
-                            _drinks = drinkState.drinks;
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Drinks',
-                                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
-                                ),
-                                ..._drinks.map((drink) {
-                                  return DrinkCheckbox(
-                                    drink: drink,
-                                    isChecked: _selectedDrinks.contains(drink.id),
-                                    onChanged: (checked) {
-                                      setState(() {
-                                        if (checked == true) {
-                                          _selectedDrinks.add(drink.id);
-                                        } else {
-                                          _selectedDrinks.remove(drink.id);
-                                        }
-                                        _updateTotalPrice();
-                                      });
-                                    },
-                                  );
-                                }).toList(),
-                              ],
-                            );
-                          }
-                          return Center(child: Text('Error loading drinks', style: TextStyle(color: Colors.white)));
-                        },
-                      ),
-                      SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          QuantityButton(
-                            icon: Icons.remove,
-                            onPressed: _decrementQuantity,
-                          ),
-                          Text(
-                            '$_quantity',
-                            style: TextStyle(fontSize: 20, color: Colors.white),
-                          ),
-                          QuantityButton(
-                            icon: Icons.add,
-                            onPressed: _incrementQuantity,
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 16),
-                      Container(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            // Add to cart logic
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.redAccent,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18.0),
+              return NotificationListener<OverscrollIndicatorNotification>(
+                onNotification: (OverscrollIndicatorNotification overscroll) {
+                  overscroll.disallowIndicator();
+                  return true;
+                },
+                child: SingleChildScrollView(
+                  physics: ClampingScrollPhysics(),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Center(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.network(
+                              product.imageUrl,
+                              height: 380,
+                              fit: BoxFit.contain,
                             ),
-                            padding: EdgeInsets.symmetric(vertical: 16),
-                          ),
-                          child: Text(
-                            'Add to Cart (\$${_totalPrice.toStringAsFixed(2)})',
-                            style: TextStyle(color: Colors.white, fontSize: 18),
                           ),
                         ),
-                      ),
-                    ],
+                        SizedBox(height: 16),
+                        Text(
+                          product.name,
+                          style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
+                        ),
+                        SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              '\$${product.price.toStringAsFixed(2)}',
+                              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
+                            ),
+                            Row(
+                              children: List.generate(5, (index) {
+                                return Icon(
+                                  index < product.rating.round() ? Icons.star : Icons.star_border,
+                                  color: Colors.yellow,
+                                  size: 20,
+                                );
+                              }),
+                            ),
+                            Text(
+                              '(${product.reviews} reviews)',
+                              style: TextStyle(fontSize: 16, color: Colors.white70),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 16),
+                        Text(
+                          product.description,
+                          style: TextStyle(fontSize: 22, color: Colors.white70),
+                        ),
+                        SizedBox(height: 16),
+                        BlocBuilder<IngredientBloc, IngredientState>(
+                          builder: (context, ingredientState) {
+                            if (ingredientState is IngredientLoading) {
+                              return Center(child: CircularProgressIndicator());
+                            }
+                            if (ingredientState is IngredientLoaded) {
+                              _ingredients = ingredientState.ingredients;
+                              _selectedIngredients = _ingredients.map((ingredient) => ingredient.id).toList();
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Ingredients',
+                                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                                  ),
+                                  ..._ingredients.map((ingredient) {
+                                    return Material(
+                                      type: MaterialType.transparency,
+                                      child: IngredientCheckbox(
+                                        ingredient: ingredient,
+                                        isChecked: _selectedIngredients.contains(ingredient.id),
+                                        onChanged: ingredient.isMandatory
+                                            ? null
+                                            : (checked) {
+                                          setState(() {
+                                            if (checked == true) {
+                                              _selectedIngredients.add(ingredient.id);
+                                            } else {
+                                              _selectedIngredients.remove(ingredient.id);
+                                            }
+                                            _updateTotalPrice();
+                                          });
+                                        },
+                                      ),
+                                    );
+                                  }).toList(),
+                                ],
+                              );
+                            }
+                            return Center(child: Text('Error loading ingredients', style: TextStyle(color: Colors.white)));
+                          },
+                        ),
+                        SizedBox(height: 16),
+                        BlocBuilder<AddonBloc, AddonState>(
+                          builder: (context, addonState) {
+                            if (addonState is AddonLoading) {
+                              return Center(child: CircularProgressIndicator());
+                            }
+                            if (addonState is AddonLoaded) {
+                              _addons = addonState.addons;
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Add-ons',
+                                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                                  ),
+                                  ..._addons.map((addon) {
+                                    return Material(
+                                      type: MaterialType.transparency,
+                                      child: AddonCheckbox(
+                                        addon: addon,
+                                        isChecked: _selectedAddons.contains(addon.id),
+                                        onChanged: (checked) {
+                                          setState(() {
+                                            if (checked == true) {
+                                              _selectedAddons.add(addon.id);
+                                            } else {
+                                              _selectedAddons.remove(addon.id);
+                                            }
+                                            _updateTotalPrice();
+                                          });
+                                        },
+                                      ),
+                                    );
+                                  }).toList(),
+                                ],
+                              );
+                            }
+                            return Center(child: Text('Error loading add-ons', style: TextStyle(color: Colors.white)));
+                          },
+                        ),
+                        SizedBox(height: 16),
+                        BlocBuilder<DrinkBloc, DrinkState>(
+                          builder: (context, drinkState) {
+                            if (drinkState is DrinkLoading) {
+                              return Center(child: CircularProgressIndicator());
+                            }
+                            if (drinkState is DrinkLoaded) {
+                              _drinks = drinkState.drinks;
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Drinks',
+                                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                                  ),
+                                  ..._drinks.map((drink) {
+                                    return Material(
+                                      type: MaterialType.transparency,
+                                      child: DrinkCheckbox(
+                                        drink: drink,
+                                        isChecked: _selectedDrinks.contains(drink.id),
+                                        onChanged: (checked) {
+                                          setState(() {
+                                            if (checked == true) {
+                                              _selectedDrinks.add(drink.id);
+                                            } else {
+                                              _selectedDrinks.remove(drink.id);
+                                            }
+                                            _updateTotalPrice();
+                                          });
+                                        },
+                                      ),
+                                    );
+                                  }).toList(),
+                                ],
+                              );
+                            }
+                            return Center(child: Text('Error loading drinks', style: TextStyle(color: Colors.white)));
+                          },
+                        ),
+                        SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            QuantityButton(
+                              icon: Icons.remove,
+                              onPressed: _decrementQuantity,
+                            ),
+                            Text(
+                              '$_quantity',
+                              style: TextStyle(fontSize: 20, color: Colors.white),
+                            ),
+                            QuantityButton(
+                              icon: Icons.add,
+                              onPressed: _incrementQuantity,
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 16),
+                        Container(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              // Add to cart logic
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.redAccent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18.0),
+                              ),
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                            ),
+                            child: Text(
+                              'Add to Cart (\$${_totalPrice.toStringAsFixed(2)})',
+                              style: TextStyle(color: Colors.white, fontSize: 18),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               );

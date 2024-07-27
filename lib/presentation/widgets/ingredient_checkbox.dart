@@ -18,7 +18,7 @@ class IngredientCheckbox extends StatelessWidget {
     return CheckboxListTile(
       title: Text(ingredient.name, style: TextStyle(color: Colors.white)),
       value: isChecked,
-      onChanged: ingredient.isMandatory ? null : onChanged,
+      onChanged: onChanged,
       controlAffinity: ListTileControlAffinity.leading,
       activeColor: Colors.redAccent,
       checkColor: Colors.white,
