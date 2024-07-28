@@ -24,6 +24,8 @@ dependencies:
   bloc: ^8.1.4
   flutter_bloc: ^8.1.6
   salomon_bottom_bar: ^3.3.2
+  intl_phone_field: ^3.2.0
+  firebase_app_check: ^0.3.0+3
 
 dev_dependencies:
   flutter_test:

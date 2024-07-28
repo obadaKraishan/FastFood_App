@@ -16,10 +16,18 @@ import 'package:fastfood_app/config/app_router.dart';
 import 'package:fastfood_app/config/theme.dart';
 import 'package:fastfood_app/presentation/widgets/custom_bottom_navigation_bar.dart';
 import 'package:fastfood_app/presentation/screens/app_entry_point.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
+  // Activate App Check
+  await FirebaseAppCheck.instance.activate(
+    androidProvider: AndroidProvider.playIntegrity,
+    appleProvider: AppleProvider.deviceCheck,
+  );
+
   runApp(MyApp());
 }
 
