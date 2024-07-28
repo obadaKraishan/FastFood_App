@@ -28,6 +28,9 @@ void main() async {
     appleProvider: AppleProvider.deviceCheck,
   );
 
+  // Uncomment the following line if you need to use a debug token
+  // FirebaseAppCheck.instance.setTokenAutoRefreshEnabled(true);
+
   runApp(MyApp());
 }
 

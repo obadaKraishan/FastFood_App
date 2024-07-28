@@ -25,6 +25,32 @@ class UserModel {
     required this.updatedAt,
   });
 
+  UserModel copyWith({
+    String? id,
+    String? name,
+    String? email,
+    String? phone,
+    String? avatar,
+    String? gender,
+    Map<String, dynamic>? location,
+    List<String>? wishlist,
+    Timestamp? createdAt,
+    Timestamp? updatedAt,
+  }) {
+    return UserModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      phone: phone ?? this.phone,
+      avatar: avatar ?? this.avatar,
+      gender: gender ?? this.gender,
+      location: location ?? this.location,
+      wishlist: wishlist ?? this.wishlist,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
   factory UserModel.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return UserModel(

@@ -8,59 +8,72 @@ import 'package:firebase_auth/firebase_auth.dart';
 class UserBloc extends Bloc<UserEvent, UserState> {
   final UserRepository userRepository;
 
-  UserBloc({required this.userRepository}) : super(UserInitial());
+  UserBloc({required this.userRepository}) : super(UserInitial()) {
+    on<RegisterUser>(_onRegisterUser);
+    on<LoginUser>(_onLoginUser);
+    on<LoadUser>(_onLoadUser);
+    on<UpdateUser>(_onUpdateUser);
+    on<LogoutUser>(_onLogoutUser);
+  }
 
-  @override
-  Stream<UserState> mapEventToState(UserEvent event) async* {
-    if (event is RegisterUser) {
-      yield UserLoading();
-      try {
-        await userRepository.registerUser(event.user, event.password);
-        yield UserLoaded(user: event.user);
-      } catch (e) {
-        yield UserError(message: e.toString());
+  void _onRegisterUser(RegisterUser event, Emitter<UserState> emit) async {
+    emit(UserLoading());
+    try {
+      await userRepository.registerUser(event.user, event.password);
+      print('User registered successfully: ${event.user.email}');
+      emit(UserLoaded(user: event.user));
+    } catch (e) {
+      print('Error registering user: $e');
+      emit(UserError(message: e.toString()));
+    }
+  }
+
+  void _onLoginUser(LoginUser event, Emitter<UserState> emit) async {
+    emit(UserLoading());
+    try {
+      await userRepository.loginUser(event.email, event.password);
+      UserModel? user = await userRepository.getUser(FirebaseAuth.instance.currentUser!.uid);
+      if (user != null) {
+        emit(UserLoaded(user: user));
+      } else {
+        emit(UserError(message: "User not found"));
       }
-    } else if (event is LoginUser) {
-      yield UserLoading();
-      try {
-        await userRepository.loginUser(event.email, event.password);
-        UserModel? user = await userRepository.getUser(FirebaseAuth.instance.currentUser!.uid);
-        if (user != null) {
-          yield UserLoaded(user: user);
-        } else {
-          yield UserError(message: "User not found");
-        }
-      } catch (e) {
-        yield UserError(message: e.toString());
+    } catch (e) {
+      emit(UserError(message: e.toString()));
+    }
+  }
+
+  void _onLoadUser(LoadUser event, Emitter<UserState> emit) async {
+    emit(UserLoading());
+    try {
+      UserModel? user = await userRepository.getUser(event.userId);
+      if (user != null) {
+        emit(UserLoaded(user: user));
+      } else {
+        emit(UserError(message: "User not found"));
       }
-    } else if (event is LoadUser) {
-      yield UserLoading();
-      try {
-        UserModel? user = await userRepository.getUser(event.userId);
-        if (user != null) {
-          yield UserLoaded(user: user);
-        } else {
-          yield UserError(message: "User not found");
-        }
-      } catch (e) {
-        yield UserError(message: e.toString());
-      }
-    } else if (event is UpdateUser) {
-      yield UserLoading();
-      try {
-        await userRepository.updateUser(event.user);
-        yield UserLoaded(user: event.user);
-      } catch (e) {
-        yield UserError(message: e.toString());
-      }
-    } else if (event is LogoutUser) {
-      yield UserLoading();
-      try {
-        await userRepository.logoutUser();
-        yield UserInitial();
-      } catch (e) {
-        yield UserError(message: e.toString());
-      }
+    } catch (e) {
+      emit(UserError(message: e.toString()));
+    }
+  }
+
+  void _onUpdateUser(UpdateUser event, Emitter<UserState> emit) async {
+    emit(UserLoading());
+    try {
+      await userRepository.updateUser(event.user);
+      emit(UserLoaded(user: event.user));
+    } catch (e) {
+      emit(UserError(message: e.toString()));
+    }
+  }
+
+  void _onLogoutUser(LogoutUser event, Emitter<UserState> emit) async {
+    emit(UserLoading());
+    try {
+      await userRepository.logoutUser();
+      emit(UserInitial());
+    } catch (e) {
+      emit(UserError(message: e.toString()));
     }
   }
 }

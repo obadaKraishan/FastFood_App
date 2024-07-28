@@ -11,11 +11,18 @@ class UserRepository {
         _firestore = firestore ?? FirebaseFirestore.instance;
 
   Future<void> registerUser(UserModel user, String password) async {
-    UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
-      email: user.email,
-      password: password,
-    );
-    await _firestore.collection('users').doc(userCredential.user!.uid).set(user.toMap());
+    try {
+      UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
+        email: user.email,
+        password: password,
+      );
+      user = user.copyWith(id: userCredential.user!.uid);  // Update user with the correct ID
+      await _firestore.collection('users').doc(user.id).set(user.toMap());
+      print("User data saved to Firestore: ${user.toMap()}");
+    } catch (e) {
+      print("Error saving user to Firestore: $e");
+      rethrow;  // Re-throw the error to handle it in the calling code
+    }
   }
 
   Future<void> loginUser(String email, String password) async {
