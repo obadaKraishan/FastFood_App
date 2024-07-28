@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fastfood_app/presentation/screens/home/category_screen.dart';
 import 'package:fastfood_app/presentation/screens/home/popular_screen.dart';
 import 'package:fastfood_app/presentation/widgets/featured_banner.dart';
+import 'package:fastfood_app/presentation/widgets/user_info_widget.dart'; // Import your new widget
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -24,30 +25,7 @@ class HomeContentScreen extends StatelessWidget {
           // User Info
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  backgroundImage: AssetImage('assets/images/onboarding/delivery_person.png'), // Replace with actual image URL
-                  radius: 30,
-                ),
-                SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Welcome',
-                      style: TextStyle(fontSize: 16, color: Colors.white70),
-                    ),
-                    Text(
-                      'Niloy Pordan',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
-                    ),
-                  ],
-                ),
-                Spacer(),
-                Icon(Icons.notifications, color: Colors.white),
-              ],
-            ),
+            child: UserInfoWidget(), // Use the new widget here
           ),
           // Featured Offer Banner
           FeaturedBanner(),

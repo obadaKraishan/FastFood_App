@@ -15,7 +15,7 @@ class PopularScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => ProductBloc(productRepository: context.read<ProductRepository>())..add(LoadProducts()),
       child: Container(
-        height: 380, // Adjusted height for better visibility
+        height: 375, // Adjusted height for better visibility
         child: BlocBuilder<ProductBloc, ProductState>(
           builder: (context, state) {
             if (state is ProductLoading) {

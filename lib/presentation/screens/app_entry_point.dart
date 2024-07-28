@@ -4,8 +4,8 @@ import 'package:fastfood_app/logic/blocs/auth/auth_bloc.dart';
 import 'package:fastfood_app/logic/blocs/auth/auth_state.dart';
 import 'package:fastfood_app/logic/blocs/user/user_bloc.dart';
 import 'package:fastfood_app/logic/blocs/user/user_event.dart';
-import 'package:fastfood_app/presentation/screens/home/home_screen.dart';
 import 'package:fastfood_app/presentation/screens/onboarding/onboarding_screen.dart';
+import 'package:fastfood_app/presentation/widgets/custom_bottom_navigation_bar.dart';
 
 class AppEntryPoint extends StatelessWidget {
   @override
@@ -14,7 +14,7 @@ class AppEntryPoint extends StatelessWidget {
       builder: (context, state) {
         if (state is AuthAuthenticated) {
           context.read<UserBloc>().add(LoadUser(userId: state.user!.uid));
-          return HomeScreen();
+          return CustomBottomNavigationBar(); // Use CustomBottomNavigationBar here
         } else if (state is AuthUnauthenticated) {
           return OnboardingScreen();
         } else {
