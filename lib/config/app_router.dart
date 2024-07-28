@@ -34,13 +34,19 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => CartScreen());
       case '/payment':
         return MaterialPageRoute(builder: (_) => PaymentScreen());
-      case '/products': // Add the route for the new screen
+      case '/products':
         return MaterialPageRoute(builder: (_) => ProductsScreen());
-      case '/categories': // Add the route for the new screen
+      case '/categories':
         return MaterialPageRoute(builder: (_) => CategoriesScreen());
       case '/product-details':
         final productId = settings.arguments as String;
         return MaterialPageRoute(builder: (_) => ProductDetailsScreen(productId: productId));
+      case '/register': // Add the route for the register screen
+        return MaterialPageRoute(builder: (_) => RegisterScreen());
+      case '/login': // Add the route for the login screen
+        return MaterialPageRoute(builder: (_) => LoginScreen());
+      case '/edit-profile': // Add the route for the edit profile screen
+        return MaterialPageRoute(builder: (_) => EditProfileScreen());
       default:
         return MaterialPageRoute(builder: (_) => OnboardingScreen());
     }

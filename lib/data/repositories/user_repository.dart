@@ -1,13 +1,37 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fastfood_app/data/models/user_model.dart';
-import 'package:fastfood_app/data/providers/firestore_provider.dart';
 
 class UserRepository {
-  final FirestoreProvider _firestoreProvider;
+  final FirebaseAuth _firebaseAuth;
+  final FirebaseFirestore _firestore;
 
-  UserRepository({FirestoreProvider? firestoreProvider})
-      : _firestoreProvider = firestoreProvider ?? FirestoreProvider();
+  UserRepository({FirebaseAuth? firebaseAuth, FirebaseFirestore? firestore})
+      : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
+        _firestore = firestore ?? FirebaseFirestore.instance;
 
-  Future<void> addUser(UserModel user) async {
-    await _firestoreProvider.addUser(user.toMap());
+  Future<void> registerUser(UserModel user, String password) async {
+    UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
+      email: user.email,
+      password: password,
+    );
+    await _firestore.collection('users').doc(userCredential.user!.uid).set(user.toMap());
+  }
+
+  Future<void> loginUser(String email, String password) async {
+    await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
+  }
+
+  Future<void> updateUser(UserModel user) async {
+    await _firestore.collection('users').doc(user.id).update(user.toMap());
+  }
+
+  Future<UserModel?> getUser(String userId) async {
+    DocumentSnapshot doc = await _firestore.collection('users').doc(userId).get();
+    return doc.exists ? UserModel.fromFirestore(doc) : null;
+  }
+
+  Future<void> logoutUser() async {
+    await _firebaseAuth.signOut();
   }
 }

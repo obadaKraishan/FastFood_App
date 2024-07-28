@@ -7,9 +7,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:fastfood_app/data/providers/firestore_provider.dart';
 import 'package:fastfood_app/data/repositories/category_repository.dart';
+import 'package:fastfood_app/data/repositories/user_repository.dart'; // Add this import
 import 'package:fastfood_app/config/app_router.dart';
 import 'package:fastfood_app/config/theme.dart';
 import 'package:fastfood_app/presentation/widgets/custom_bottom_navigation_bar.dart';
+import 'package:fastfood_app/logic/blocs/user/user_bloc.dart'; // Add this import
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,14 +44,24 @@ class MyApp extends StatelessWidget {
         RepositoryProvider<DrinkRepository>(
           create: (context) => DrinkRepository(firestoreProvider: context.read<FirestoreProvider>()),
         ),
+        RepositoryProvider<UserRepository>( // Add the UserRepository provider
+          create: (context) => UserRepository(),
+        ),
       ],
-      child: MaterialApp(
-        title: 'Food Delivery App',
-        theme: appTheme,
-        onGenerateRoute: _appRouter.generateRoute,
-        home: CustomBottomNavigationBar(),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<UserBloc>( // Add the UserBloc provider
+            create: (context) => UserBloc(userRepository: context.read<UserRepository>()),
+          ),
+          // Add other BlocProviders if necessary
+        ],
+        child: MaterialApp(
+          title: 'Food Delivery App',
+          theme: appTheme,
+          onGenerateRoute: _appRouter.generateRoute,
+          home: CustomBottomNavigationBar(),
+        ),
       ),
     );
   }
 }
-
