@@ -2,8 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:fastfood_app/data/models/user_model.dart';
 
 abstract class UserEvent extends Equatable {
-  const UserEvent();
-
   @override
   List<Object> get props => [];
 }
@@ -28,15 +26,6 @@ class LoginUser extends UserEvent {
   List<Object> get props => [email, password];
 }
 
-class LoadUser extends UserEvent {
-  final String userId;
-
-  LoadUser({required this.userId});
-
-  @override
-  List<Object> get props => [userId];
-}
-
 class UpdateUser extends UserEvent {
   final UserModel user;
 
@@ -44,6 +33,15 @@ class UpdateUser extends UserEvent {
 
   @override
   List<Object> get props => [user];
+}
+
+class LoadUser extends UserEvent {
+  final String userId;
+
+  LoadUser({required this.userId});
+
+  @override
+  List<Object> get props => [userId];
 }
 
 class LogoutUser extends UserEvent {}

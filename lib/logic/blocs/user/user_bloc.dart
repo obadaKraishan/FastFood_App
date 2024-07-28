@@ -3,6 +3,7 @@ import 'package:fastfood_app/data/models/user_model.dart';
 import 'package:fastfood_app/data/repositories/user_repository.dart';
 import 'package:fastfood_app/logic/blocs/user/user_event.dart';
 import 'package:fastfood_app/logic/blocs/user/user_state.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class UserBloc extends Bloc<UserEvent, UserState> {
   final UserRepository userRepository;

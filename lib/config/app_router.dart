@@ -12,6 +12,9 @@ import 'package:fastfood_app/presentation/screens/home/nearby_restaurants_screen
 import 'package:fastfood_app/presentation/screens/cart/cart_screen.dart';
 import 'package:fastfood_app/presentation/screens/payment/payment_screen.dart';
 import 'package:fastfood_app/presentation/screens/home/product_details_screen.dart';
+import 'package:fastfood_app/presentation/screens/auth/login_screen.dart';
+import 'package:fastfood_app/presentation/screens/auth/register_screen.dart';
+import 'package:fastfood_app/presentation/screens/profile/edit_profile_screen.dart';
 
 class AppRouter {
   Route<dynamic> generateRoute(RouteSettings settings) {
