@@ -4,6 +4,21 @@ class OnboardingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, '/home');
+            },
+            child: Text(
+              "Skip",
+              style: TextStyle(color: Colors.white, fontSize: 16),
+            ),
+          ),
+        ],
+        backgroundColor: Color(0xFF1C1C1C),
+        elevation: 0,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
