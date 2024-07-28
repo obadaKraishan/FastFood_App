@@ -1,3 +1,5 @@
+import 'package:fastfood_app/presentation/screens/auth/register_screen.dart';
+import 'package:fastfood_app/presentation/screens/auth/login_screen.dart';
 import 'package:fastfood_app/presentation/screens/categories/categories_screen.dart';
 import 'package:fastfood_app/presentation/screens/products/products_screen.dart';
 import 'package:flutter/material.dart';
@@ -7,14 +9,10 @@ import 'package:fastfood_app/presentation/screens/profile/profile_screen.dart';
 import 'package:fastfood_app/presentation/screens/search/search_screen.dart';
 import 'package:fastfood_app/presentation/screens/search/filter_screen.dart';
 import 'package:fastfood_app/presentation/screens/home/popular_screen.dart';
-import 'package:fastfood_app/presentation/screens/home/home_screen.dart';
 import 'package:fastfood_app/presentation/screens/home/nearby_restaurants_screen.dart';
 import 'package:fastfood_app/presentation/screens/cart/cart_screen.dart';
 import 'package:fastfood_app/presentation/screens/payment/payment_screen.dart';
 import 'package:fastfood_app/presentation/screens/home/product_details_screen.dart';
-import 'package:fastfood_app/presentation/screens/auth/login_screen.dart';
-import 'package:fastfood_app/presentation/screens/auth/register_screen.dart';
-import 'package:fastfood_app/presentation/screens/profile/edit_profile_screen.dart';
 
 class AppRouter {
   Route<dynamic> generateRoute(RouteSettings settings) {
@@ -41,15 +39,13 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => ProductsScreen());
       case '/categories':
         return MaterialPageRoute(builder: (_) => CategoriesScreen());
+      case '/register':
+        return MaterialPageRoute(builder: (_) => RegisterScreen());
+      case '/login':
+        return MaterialPageRoute(builder: (_) => LoginScreen());
       case '/product-details':
         final productId = settings.arguments as String;
         return MaterialPageRoute(builder: (_) => ProductDetailsScreen(productId: productId));
-      case '/register': // Add the route for the register screen
-        return MaterialPageRoute(builder: (_) => RegisterScreen());
-      case '/login': // Add the route for the login screen
-        return MaterialPageRoute(builder: (_) => LoginScreen());
-      case '/edit-profile': // Add the route for the edit profile screen
-        return MaterialPageRoute(builder: (_) => EditProfileScreen());
       default:
         return MaterialPageRoute(builder: (_) => OnboardingScreen());
     }

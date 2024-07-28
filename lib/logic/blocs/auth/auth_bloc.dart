@@ -8,41 +8,47 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   AuthBloc({required AuthRepository authRepository})
       : _authRepository = authRepository,
-        super(AuthInitial());
+        super(AuthInitial()) {
+    on<AuthSignIn>(_onSignIn);
+    on<AuthSignUp>(_onSignUp);
+    on<AuthSignOut>(_onSignOut);
+    on<AuthUserChanged>(_onUserChanged);
 
-  @override
-  Stream<AuthState> mapEventToState(AuthEvent event) async* {
-    if (event is AuthSignIn) {
-      yield* _mapSignInToState(event);
-    } else if (event is AuthSignUp) {
-      yield* _mapSignUpToState(event);
-    } else if (event is AuthSignOut) {
-      yield* _mapSignOutToState();
-    }
+    _authRepository.user.listen((user) {
+      add(AuthUserChanged(user: user));
+    });
   }
 
-  Stream<AuthState> _mapSignInToState(AuthSignIn event) async* {
+  void _onSignIn(AuthSignIn event, Emitter<AuthState> emit) async {
     try {
-      yield AuthLoading();
+      emit(AuthLoading());
       final user = await _authRepository.signInWithEmailAndPassword(event.email, event.password);
-      yield AuthAuthenticated(user: user);
+      emit(AuthAuthenticated(user: user));
     } catch (_) {
-      yield AuthFailure();
+      emit(AuthFailure());
     }
   }
 
-  Stream<AuthState> _mapSignUpToState(AuthSignUp event) async* {
+  void _onSignUp(AuthSignUp event, Emitter<AuthState> emit) async {
     try {
-      yield AuthLoading();
+      emit(AuthLoading());
       final user = await _authRepository.signUpWithEmailAndPassword(event.email, event.password);
-      yield AuthAuthenticated(user: user);
+      emit(AuthAuthenticated(user: user));
     } catch (_) {
-      yield AuthFailure();
+      emit(AuthFailure());
     }
   }
 
-  Stream<AuthState> _mapSignOutToState() async* {
+  void _onSignOut(AuthSignOut event, Emitter<AuthState> emit) async {
     await _authRepository.signOut();
-    yield AuthUnauthenticated();
+    emit(AuthUnauthenticated());
+  }
+
+  void _onUserChanged(AuthUserChanged event, Emitter<AuthState> emit) {
+    if (event.user != null) {
+      emit(AuthAuthenticated(user: event.user));
+    } else {
+      emit(AuthUnauthenticated());
+    }
   }
 }

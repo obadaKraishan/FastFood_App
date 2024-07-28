@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Add this import
 import 'package:fastfood_app/logic/blocs/auth/auth_bloc.dart';
 import 'package:fastfood_app/logic/blocs/auth/auth_event.dart';
 import 'package:fastfood_app/logic/blocs/auth/auth_state.dart';
 import 'package:fastfood_app/data/models/user_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -62,16 +62,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       UserModel user = UserModel(
-                        id: '', // Firebase will generate ID
+                        id: '',
                         name: _nameController.text,
                         email: _emailController.text,
                         phone: _phoneController.text,
-                        avatar: '', // Placeholder
-                        gender: '', // Placeholder
-                        location: {}, // Placeholder
+                        avatar: '',
+                        gender: '',
+                        location: {},
                         wishlist: [],
-                        createdAt: Timestamp.now(), // Fix here
-                        updatedAt: Timestamp.now(), // Fix here
+                        createdAt: Timestamp.now(),
+                        updatedAt: Timestamp.now(),
                       );
                       context.read<AuthBloc>().add(AuthSignUp(
                         email: user.email,
@@ -80,6 +80,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     }
                   },
                   child: Text('Register'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/login');
+                  },
+                  child: Text('Already have an account? Login'),
                 ),
               ],
             ),
