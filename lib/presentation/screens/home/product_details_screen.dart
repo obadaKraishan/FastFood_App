@@ -41,16 +41,20 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   List<String> _selectedAddons = [];
   List<String> _selectedDrinks = [];
 
-  late double _basePrice;
+  double? _basePrice;
   List<IngredientModel> _ingredients = [];
   List<AddonModel> _addons = [];
   List<DrinkModel> _drinks = [];
+
+  bool _isProductLoaded = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _updateTotalPrice();
+      if (_isProductLoaded) {
+        _updateTotalPrice();
+      }
     });
   }
 
@@ -71,7 +75,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   }
 
   void _updateTotalPrice() {
-    double price = _basePrice;
+    if (_basePrice == null) return;
+
+    double price = _basePrice!;
 
     for (var addonId in _selectedAddons) {
       price += _addons.firstWhere((addon) => addon.id == addonId).price;
@@ -125,8 +131,15 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             }
             if (state is ProductLoaded && state.product != null) {
               final product = state.product!;
-              _basePrice = product.price;
-              _totalPrice = _basePrice * _quantity;
+              if (!_isProductLoaded) {
+                _basePrice = product.price;
+                _isProductLoaded = true;
+
+                // Call _updateTotalPrice after the first frame is built to avoid calling setState during build
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  _updateTotalPrice();
+                });
+              }
 
               context.read<IngredientBloc>().add(LoadIngredientsByProduct(ingredientIds: product.ingredientIds));
               context.read<AddonBloc>().add(LoadAddonsByProduct(addonIds: product.addonIds));
@@ -164,7 +177,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              '\$${product.price.toStringAsFixed(2)}',
+                              '\$${_totalPrice.toStringAsFixed(2)}',
                               style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
                             ),
                             Row(
@@ -195,7 +208,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             }
                             if (ingredientState is IngredientLoaded) {
                               _ingredients = ingredientState.ingredients;
-                              _selectedIngredients = _ingredients.map((ingredient) => ingredient.id).toList();
+                              _selectedIngredients = _ingredients.where((ingredient) => ingredient.isMandatory).map((ingredient) => ingredient.id).toList();
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
