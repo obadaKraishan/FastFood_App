@@ -1,4 +1,5 @@
 import 'package:fastfood_app/presentation/screens/home/home_screen.dart';
+import 'package:fastfood_app/presentation/screens/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
@@ -14,7 +15,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
     HomeScreen(),
     Center(child: Text('Orders', style: TextStyle(color: Colors.white))),
     Center(child: Text('Cart', style: TextStyle(color: Colors.white))),
-    Center(child: Text('Settings', style: TextStyle(color: Colors.white))),
+    ProfileScreen(), // Change here to use the ProfileScreen
   ];
 
   void _onTap(int index) {
@@ -52,8 +53,8 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
             unselectedColor: Colors.grey,
           ),
           SalomonBottomBarItem(
-            icon: Icon(Icons.settings),
-            title: Text("Settings"),
+            icon: Icon(Icons.account_circle_outlined),
+            title: Text("Profile"),
             selectedColor: Colors.redAccent,
             unselectedColor: Colors.grey,
           ),

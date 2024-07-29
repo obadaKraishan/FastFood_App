@@ -27,7 +27,9 @@ class FeaturedBanner extends StatelessWidget {
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/products');
+                  },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.redAccent, backgroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
