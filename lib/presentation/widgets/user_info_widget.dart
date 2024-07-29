@@ -14,24 +14,39 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
 
   @override
   Widget build(BuildContext context) {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+
+    if (currentUser == null) {
+      // Redirect to login screen if the user is not logged in
+      Future.microtask(() => Navigator.pushReplacementNamed(context, '/login'));
+      return Container();
+    }
+
     return FutureBuilder<DocumentSnapshot>(
       future: FirebaseFirestore.instance
           .collection('users')
-          .doc(FirebaseAuth.instance.currentUser?.uid)
+          .doc(currentUser.uid)
           .get(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
         }
 
-        if (!snapshot.hasData || snapshot.hasError) {
+        if (!snapshot.hasData || snapshot.hasError || !snapshot.data!.exists) {
           return Text(
             'Error loading user data',
             style: TextStyle(color: Colors.white),
           );
         }
 
-        var userData = snapshot.data!.data() as Map<String, dynamic>;
+        var userData = snapshot.data!.data() as Map<String, dynamic>?;
+        if (userData == null) {
+          return Text(
+            'User data is null',
+            style: TextStyle(color: Colors.white),
+          );
+        }
+
         _avatarUrl = userData['avatar'];
 
         return Row(
