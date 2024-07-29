@@ -6,17 +6,19 @@ import 'package:fastfood_app/logic/blocs/auth/auth_state.dart';
 import 'package:fastfood_app/logic/blocs/user/user_bloc.dart';
 import 'package:fastfood_app/logic/blocs/user/user_state.dart';
 import 'package:fastfood_app/presentation/widgets/profile_options.dart';
+import 'package:provider/provider.dart';
+import 'package:fastfood_app/presentation/utils/theme_provider.dart';
 
 class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF1C2029), // Dark background color
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text('Profile'),
         centerTitle: true,
         foregroundColor: Colors.white,
-        backgroundColor: Color(0xFF1C2029),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
@@ -99,9 +101,9 @@ class ProfileContent extends StatelessWidget {
                     style: TextStyle(color: Colors.white),
                   ),
                   Switch(
-                    value: false, // Replace with your state management solution
+                    value: Provider.of<ThemeProvider>(context).isDarkMode,
                     onChanged: (value) {
-                      // Handle switch toggle
+                      Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
                     },
                   ),
                 ],
