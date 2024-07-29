@@ -8,6 +8,7 @@ import 'package:fastfood_app/logic/blocs/user/user_state.dart';
 import 'package:fastfood_app/presentation/widgets/profile_options.dart';
 import 'package:provider/provider.dart';
 import 'package:fastfood_app/presentation/utils/theme_provider.dart';
+import 'dart:io';
 
 class ProfileScreen extends StatelessWidget {
   @override
@@ -63,9 +64,26 @@ class ProfileContent extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            CircleAvatar(
-              backgroundImage: AssetImage('assets/images/profile.png'), // Replace with actual image URL
-              radius: 60,
+            GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, '/edit-profile');
+              },
+              child: CircleAvatar(
+                radius: 60,
+                backgroundImage: user.avatar != null && user.avatar.isNotEmpty
+                    ? _getImageProvider(user.avatar)
+                    : AssetImage('assets/images/profile.png') as ImageProvider,
+                child: user.avatar == null || user.avatar.isEmpty
+                    ? Align(
+                  alignment: Alignment.bottomRight,
+                  child: CircleAvatar(
+                    backgroundColor: Colors.black54,
+                    radius: 20,
+                    child: Icon(Icons.camera_alt, color: Colors.white, size: 20),
+                  ),
+                )
+                    : null,
+              ),
             ),
             SizedBox(height: 10),
             Text(
@@ -118,7 +136,8 @@ class ProfileContent extends StatelessWidget {
                   Navigator.pushNamedAndRemoveUntil(context, '/onboarding', (route) => false);
                 },
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: Colors.redAccent,
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.redAccent,
                   padding: EdgeInsets.symmetric(vertical: 16),
                 ),
                 child: Text('Log Out', style: TextStyle(fontSize: 16)),
@@ -128,5 +147,13 @@ class ProfileContent extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  ImageProvider _getImageProvider(String avatarUrl) {
+    if (avatarUrl.startsWith('http') || avatarUrl.startsWith('https')) {
+      return NetworkImage(avatarUrl);
+    } else {
+      return FileImage(File(avatarUrl));
+    }
   }
 }

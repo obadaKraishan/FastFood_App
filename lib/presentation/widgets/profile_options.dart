@@ -9,7 +9,7 @@ class ProfileOptions extends StatelessWidget {
           icon: Icons.edit,
           text: 'Edit Profile',
           onTap: () {
-            Navigator.pushNamed(context, '/edit-profile');
+            Navigator.pushNamed(context, '/edit_profile');
           },
         ),
         ProfileOptionItem(
