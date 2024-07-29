@@ -21,12 +21,6 @@ class ProfileScreen extends StatelessWidget {
         foregroundColor: Colors.white,
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
         actions: [
           IconButton(
             icon: Icon(Icons.more_horiz, color: Colors.white),

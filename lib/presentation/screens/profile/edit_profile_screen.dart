@@ -171,8 +171,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Expanded(
+            Flexible(
               child: RadioListTile(
+                contentPadding: EdgeInsets.zero,
                 title: Text('Male', style: TextStyle(color: Colors.white)),
                 value: 'Male',
                 groupValue: _selectedGender,
@@ -183,8 +184,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 },
               ),
             ),
-            Expanded(
+            Flexible(
               child: RadioListTile(
+                contentPadding: EdgeInsets.zero,
                 title: Text('Female', style: TextStyle(color: Colors.white)),
                 value: 'Female',
                 groupValue: _selectedGender,
@@ -195,8 +197,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 },
               ),
             ),
-            Expanded(
+            Flexible(
               child: RadioListTile(
+                contentPadding: EdgeInsets.zero,
                 title: Text('Other', style: TextStyle(color: Colors.white)),
                 value: 'Other',
                 groupValue: _selectedGender,
