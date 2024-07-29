@@ -16,6 +16,12 @@ class AuthRepository {
     return result.user;
   }
 
+  Future<void> changePassword(String newPassword) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    await user?.updatePassword(newPassword);
+  }
+
+
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
   }
