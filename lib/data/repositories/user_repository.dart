@@ -34,8 +34,20 @@ class UserRepository {
   }
 
   Future<UserModel?> getUser(String userId) async {
-    DocumentSnapshot doc = await _firestore.collection('users').doc(userId).get();
-    return doc.exists ? UserModel.fromFirestore(doc) : null;
+    try {
+      print("Fetching user data for userId: $userId");
+      DocumentSnapshot doc = await _firestore.collection('users').doc(userId).get();
+      if (doc.exists) {
+        print("User data found: ${doc.data()}");
+        return UserModel.fromFirestore(doc);
+      } else {
+        print("User not found in Firestore");
+        return null;
+      }
+    } catch (e) {
+      print("Error getting user from Firestore: $e");
+      return null;
+    }
   }
 
   Future<void> logoutUser() async {

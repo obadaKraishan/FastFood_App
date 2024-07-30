@@ -20,10 +20,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     emit(UserLoading());
     try {
       await userRepository.registerUser(event.user, event.password);
-      print('User registered successfully: ${event.user.email}');
       emit(UserLoaded(user: event.user));
     } catch (e) {
-      print('Error registering user: $e');
       emit(UserError(message: e.toString()));
     }
   }

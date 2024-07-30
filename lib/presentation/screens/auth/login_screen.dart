@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fastfood_app/logic/blocs/auth/auth_bloc.dart';
 import 'package:fastfood_app/logic/blocs/auth/auth_event.dart';
 import 'package:fastfood_app/logic/blocs/auth/auth_state.dart';
+import 'package:fastfood_app/logic/blocs/user/user_bloc.dart';
+import 'package:fastfood_app/logic/blocs/user/user_event.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -21,6 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthAuthenticated) {
+            context.read<UserBloc>().add(LoadUser(userId: state.user!.uid));
             Navigator.pushNamed(context, '/home');
           } else if (state is AuthFailure) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Login Failed')));

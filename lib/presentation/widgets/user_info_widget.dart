@@ -17,34 +17,24 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
     User? currentUser = FirebaseAuth.instance.currentUser;
 
     if (currentUser == null) {
-      // Redirect to login screen if the user is not logged in
-      Future.microtask(() => Navigator.pushReplacementNamed(context, '/login'));
-      return Container();
+      return _buildGuestView();
     }
 
-    return FutureBuilder<DocumentSnapshot>(
-      future: FirebaseFirestore.instance
-          .collection('users')
-          .doc(currentUser.uid)
-          .get(),
+    return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+      future: FirebaseFirestore.instance.collection('users').doc(currentUser.uid).get(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
         }
 
-        if (!snapshot.hasData || snapshot.hasError || !snapshot.data!.exists) {
-          return Text(
-            'Error loading user data',
-            style: TextStyle(color: Colors.white),
-          );
+        if (snapshot.hasError || !snapshot.hasData || snapshot.data == null || !snapshot.data!.exists) {
+          return _buildGuestView();
         }
 
-        var userData = snapshot.data!.data() as Map<String, dynamic>?;
+        var userData = snapshot.data!.data();
+
         if (userData == null) {
-          return Text(
-            'User data is null',
-            style: TextStyle(color: Colors.white),
-          );
+          return _buildGuestView();
         }
 
         _avatarUrl = userData['avatar'];
@@ -52,7 +42,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
         return Row(
           children: [
             GestureDetector(
-              onTap: _pickImage,
+              onTap: currentUser != null ? _pickImage : _promptLogin,
               child: CircleAvatar(
                 radius: 30,
                 backgroundImage: _getImageProvider(_avatarUrl),
@@ -69,24 +59,48 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
               ),
             ),
             SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Welcome',
-                  style: TextStyle(fontSize: 16, color: Colors.white70),
-                ),
-                Text(
-                  userData['name'] ?? 'User',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
-                ),
-              ],
-            ),
+            _buildUserName(userData['name'] ?? 'User'),
             Spacer(),
             Icon(Icons.notifications, color: Colors.white),
           ],
         );
       },
+    );
+  }
+
+  Widget _buildGuestView() {
+    return Row(
+      children: [
+        _buildDefaultAvatar(),
+        SizedBox(width: 10),
+        _buildUserName('Guest'),
+      ],
+    );
+  }
+
+  Widget _buildDefaultAvatar() {
+    return GestureDetector(
+      onTap: _promptLogin,
+      child: CircleAvatar(
+        radius: 30,
+        backgroundImage: AssetImage('assets/images/onboarding/delivery_person.png'),
+      ),
+    );
+  }
+
+  Widget _buildUserName(String name) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Welcome',
+          style: TextStyle(fontSize: 16, color: Colors.white70),
+        ),
+        Text(
+          name,
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+        ),
+      ],
     );
   }
 
@@ -108,6 +122,10 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
           .doc(FirebaseAuth.instance.currentUser?.uid)
           .update({'avatar': _avatarUrl});
     }
+  }
+
+  Future<void> _promptLogin() async {
+    Navigator.pushReplacementNamed(context, '/login');
   }
 
   Future<String> uploadImageToServer(File image) async {

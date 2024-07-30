@@ -1,3 +1,7 @@
+import 'package:fastfood_app/data/models/user_model.dart';
+import 'package:fastfood_app/data/repositories/user_repository.dart';
+import 'package:fastfood_app/logic/blocs/user/user_event.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fastfood_app/logic/blocs/auth/auth_bloc.dart';
@@ -13,6 +17,9 @@ import 'dart:io';
 class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    print("Current User: $currentUser");
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
@@ -21,23 +28,74 @@ class ProfileScreen extends StatelessWidget {
         foregroundColor: Colors.white,
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.more_horiz, color: Colors.white),
-            onPressed: () {
-              // Handle more button action
-            },
-          ),
-        ],
       ),
-      body: BlocBuilder<UserBloc, UserState>(
+      body: currentUser == null ? _buildGuestView(context) : _buildUserView(context, currentUser.uid),
+    );
+  }
+
+  Widget _buildGuestView(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset('assets/images/food_placeholder.png', height: 380),
+            SizedBox(height: 20),
+            Text(
+              'Feeling hungry? Join us now to order your favorite food!',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 20, color: Colors.white70),
+            ),
+            SizedBox(height: 20),
+            Container(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/login');
+                },
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Color(0xFF81171b),
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                ),
+                child: Text('Login', style: TextStyle(fontSize: 16)),
+              ),
+            ),
+            SizedBox(height: 10),
+            Container(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/register');
+                },
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Color(0xFF2A313F),
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                ),
+                child: Text('Register', style: TextStyle(fontSize: 16)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildUserView(BuildContext context, String userId) {
+    print("Fetching user view for userId: $userId");
+    return BlocProvider<UserBloc>(
+      create: (context) => UserBloc(userRepository: UserRepository())..add(LoadUser(userId: userId)),
+      child: BlocBuilder<UserBloc, UserState>(
         builder: (context, state) {
+          print("User State: $state");
           if (state is UserLoaded) {
             return ProfileContent(user: state.user);
           } else if (state is UserLoading) {
             return Center(child: CircularProgressIndicator());
           } else {
-            return Center(child: Text('Failed to load user data', style: TextStyle(color: Colors.white)));
+            return _buildGuestView(context); // Show guest view if there's an error or no data
           }
         },
       ),
@@ -46,7 +104,7 @@ class ProfileScreen extends StatelessWidget {
 }
 
 class ProfileContent extends StatelessWidget {
-  final user;
+  final UserModel user;
 
   ProfileContent({required this.user});
 
