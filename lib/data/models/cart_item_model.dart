@@ -6,7 +6,7 @@ class CartItem {
   final int quantity;
   final double price;
   final String name;
-  final String imageUrl; // Add this field if you need image URL
+  final String imageUrl;
 
   CartItem({
     required this.id,
@@ -35,7 +35,7 @@ class CartItem {
       quantity: map['quantity'],
       price: map['price'],
       name: map['name'],
-      imageUrl: map['imageUrl'], // Add this field if you need image URL
+      imageUrl: map['imageUrl'],
     );
   }
 

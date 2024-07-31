@@ -36,4 +36,20 @@ class CartRepository {
 
     await batch.commit();
   }
+
+  Future<void> addItemToCart(CartItem cartItem) async {
+    final user = firebaseAuth.currentUser;
+    if (user == null) {
+      throw Exception('User not logged in');
+    }
+
+    print('User ID: ${user.uid}');
+    await firestore.collection('users').doc(user.uid).collection('cart').doc(cartItem.id).set(cartItem.toMap())
+        .then((_) {
+      print('Item added to cart successfully');
+    })
+        .catchError((error) {
+      print('Failed to add item to cart: $error');
+    });
+  }
 }

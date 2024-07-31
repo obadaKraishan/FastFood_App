@@ -6,9 +6,7 @@ import 'package:fastfood_app/logic/blocs/product/product_bloc.dart';
 import 'package:fastfood_app/logic/blocs/product/product_event.dart';
 import 'package:fastfood_app/logic/blocs/product/product_state.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:fastfood_app/logic/blocs/cart/cart_bloc.dart';
-import 'package:fastfood_app/logic/blocs/cart/cart_event.dart';
-import 'package:fastfood_app/data/models/cart_item_model.dart';
+import 'package:fastfood_app/presentation/utils/cart_utils.dart';
 import 'package:fastfood_app/presentation/screens/home/product_details_screen.dart';
 import 'package:badges/badges.dart' as badges;
 
@@ -137,24 +135,7 @@ class PopularScreen extends StatelessWidget {
                                           width: double.infinity,
                                           child: ElevatedButton(
                                             onPressed: () {
-                                              final cartItem = CartItem(
-                                                id: product.id,
-                                                productId: product.id,
-                                                name: product.name,
-                                                price: product.price,
-                                                quantity: 1,
-                                                imageUrl: product.imageUrl,
-                                              );
-                                              context.read<CartBloc>().add(AddToCart(item: cartItem));
-
-                                              incrementCartItemCount();
-
-                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                SnackBar(
-                                                  content: Text('${product.name} added to cart'),
-                                                  duration: Duration(seconds: 2),
-                                                ),
-                                              );
+                                              addToCart(context, product, incrementCartItemCount);
                                             },
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: Colors.redAccent,
@@ -203,4 +184,3 @@ class PopularScreen extends StatelessWidget {
     );
   }
 }
-

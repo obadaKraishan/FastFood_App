@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fastfood_app/data/models/addon_model.dart';
 import 'package:fastfood_app/data/models/cart_item_model.dart';
+import 'package:fastfood_app/data/models/addon_model.dart';
 import 'package:fastfood_app/data/models/category_model.dart';
 import 'package:fastfood_app/data/models/drink_model.dart';
 import 'package:fastfood_app/data/models/ingredient_model.dart';
@@ -120,12 +120,21 @@ class FirestoreProvider {
 
   // Cart methods
   Future<void> addItemToCart(String userId, CartItem cartItem) async {
+    final cartItemMap = cartItem.toMap();
+    print('Adding item to cart: $cartItemMap for userId: $userId');
+
     await _firestore
         .collection('users')
         .doc(userId)
         .collection('cart')
         .doc(cartItem.id)
-        .set(cartItem.toMap());
+        .set(cartItemMap)
+        .then((_) {
+      print('Item added to cart successfully');
+    })
+        .catchError((error) {
+      print('Failed to add item to cart: $error');
+    });
   }
 
   Future<void> updateCartItem(String userId, CartItem cartItem) async {
@@ -134,7 +143,9 @@ class FirestoreProvider {
         .doc(userId)
         .collection('cart')
         .doc(cartItem.id)
-        .update(cartItem.toMap());
+        .update(cartItem.toMap())
+        .then((_) => print('Cart item updated successfully'))
+        .catchError((error) => print('Failed to update cart item: $error'));
   }
 
   Future<void> removeItemFromCart(String userId, String cartItemId) async {
@@ -143,7 +154,9 @@ class FirestoreProvider {
         .doc(userId)
         .collection('cart')
         .doc(cartItemId)
-        .delete();
+        .delete()
+        .then((_) => print('Cart item removed successfully'))
+        .catchError((error) => print('Failed to remove cart item: $error'));
   }
 
   Stream<List<CartItem>> getCartItems(String userId) {

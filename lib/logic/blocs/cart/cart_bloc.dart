@@ -29,17 +29,14 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   }
 
   Future<void> _onAddToCart(AddToCart event, Emitter<CartState> emit) async {
-    if (state is CartLoaded) {
-      try {
-        final cart = (state as CartLoaded).cart;
-        final updatedItems = List<CartItem>.from(cart.items)..add(event.item);
-        final updatedCart = Cart(userId: cart.userId, items: updatedItems);
-
-        await cartRepository.updateCart(updatedCart);
-        emit(CartLoaded(cart: updatedCart));
-      } catch (e) {
-        emit(CartError(message: e.toString()));
-      }
+    try {
+      print('Adding item to cart: ${event.item.toMap()}');
+      await cartRepository.addItemToCart(event.item);
+      final cart = await cartRepository.getCart();
+      emit(CartLoaded(cart: cart));
+    } catch (e) {
+      print('Failed to add item to cart: $e');
+      emit(CartError(message: e.toString()));
     }
   }
 
@@ -53,6 +50,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         await cartRepository.updateCart(updatedCart);
         emit(CartLoaded(cart: updatedCart));
       } catch (e) {
+        print('Failed to remove item from cart: $e');
         emit(CartError(message: e.toString()));
       }
     }
@@ -70,6 +68,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         await cartRepository.updateCart(updatedCart);
         emit(CartLoaded(cart: updatedCart));
       } catch (e) {
+        print('Failed to update cart item: $e');
         emit(CartError(message: e.toString()));
       }
     }
@@ -84,6 +83,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         await cartRepository.updateCart(updatedCart);
         emit(CartLoaded(cart: updatedCart));
       } catch (e) {
+        print('Failed to clear cart: $e');
         emit(CartError(message: e.toString()));
       }
     }
