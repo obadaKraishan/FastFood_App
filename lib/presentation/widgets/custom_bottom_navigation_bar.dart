@@ -1,5 +1,6 @@
 import 'package:fastfood_app/presentation/screens/home/home_screen.dart';
 import 'package:fastfood_app/presentation/screens/profile/profile_screen.dart';
+import 'package:fastfood_app/presentation/screens/cart/cart_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
@@ -14,7 +15,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   final List<Widget> _screens = [
     HomeScreen(),
     Center(child: Text('Orders', style: TextStyle(color: Colors.white))),
-    Center(child: Text('Cart', style: TextStyle(color: Colors.white))),
+    CartScreen(), // Use the CartScreen here
     ProfileScreen(), // Change here to use the ProfileScreen
   ];
 

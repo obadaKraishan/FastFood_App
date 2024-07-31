@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fastfood_app/data/models/addon_model.dart';
+import 'package:fastfood_app/data/models/cart_item_model.dart';
 import 'package:fastfood_app/data/models/category_model.dart';
 import 'package:fastfood_app/data/models/drink_model.dart';
 import 'package:fastfood_app/data/models/ingredient_model.dart';
@@ -10,6 +11,8 @@ class FirestoreProvider {
 
   FirestoreProvider({FirebaseFirestore? firestore})
       : _firestore = firestore ?? FirebaseFirestore.instance;
+
+  FirebaseFirestore get firestore => _firestore;
 
   Future<void> addCategory(CategoryModel category) async {
     await _firestore.collection('categories').doc(category.id).set(category.toMap());
@@ -111,6 +114,47 @@ class FirestoreProvider {
       });
       return snapshot.docs.map((doc) {
         return AddonModel.fromMap(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
+  // Cart methods
+  Future<void> addItemToCart(String userId, CartItem cartItem) async {
+    await _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('cart')
+        .doc(cartItem.id)
+        .set(cartItem.toMap());
+  }
+
+  Future<void> updateCartItem(String userId, CartItem cartItem) async {
+    await _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('cart')
+        .doc(cartItem.id)
+        .update(cartItem.toMap());
+  }
+
+  Future<void> removeItemFromCart(String userId, String cartItemId) async {
+    await _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('cart')
+        .doc(cartItemId)
+        .delete();
+  }
+
+  Stream<List<CartItem>> getCartItems(String userId) {
+    return _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('cart')
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return CartItem.fromMap(doc.data() as Map<String, dynamic>);
       }).toList();
     });
   }

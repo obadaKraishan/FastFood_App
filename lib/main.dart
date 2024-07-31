@@ -1,7 +1,12 @@
+import 'package:fastfood_app/data/models/cart_item_model.dart';
+import 'package:fastfood_app/data/models/cart_model.dart';
 import 'package:fastfood_app/data/repositories/auth_repository.dart';
+import 'package:fastfood_app/data/repositories/cart_repository.dart';
 import 'package:fastfood_app/data/repositories/user_repository.dart';
-import 'package:fastfood_app/logic/blocs/auth/auth_bloc.dart';
-import 'package:fastfood_app/logic/blocs/user/user_bloc.dart';
+import 'package:fastfood_app/logic/blocs/cart/cart_bloc.dart';
+import 'package:fastfood_app/logic/blocs/cart/cart_event.dart';
+import 'package:fastfood_app/logic/blocs/cart/cart_state.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -17,6 +22,9 @@ import 'package:fastfood_app/presentation/utils/theme_provider.dart';
 import 'package:fastfood_app/presentation/screens/app_entry_point.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:provider/provider.dart';
+
+import 'logic/blocs/auth/auth_bloc.dart';
+import 'logic/blocs/user/user_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -69,6 +77,9 @@ class MyApp extends StatelessWidget {
               RepositoryProvider<DrinkRepository>(
                 create: (context) => DrinkRepository(firestoreProvider: context.read<FirestoreProvider>()),
               ),
+              RepositoryProvider<CartRepository>(
+                create: (context) => CartRepository(firestore: context.read<FirestoreProvider>().firestore, firebaseAuth: FirebaseAuth.instance),
+              ),
             ],
             child: MultiBlocProvider(
               providers: [
@@ -77,6 +88,9 @@ class MyApp extends StatelessWidget {
                 ),
                 BlocProvider(
                   create: (context) => UserBloc(userRepository: context.read<UserRepository>()),
+                ),
+                BlocProvider(
+                  create: (context) => CartBloc(cartRepository: context.read<CartRepository>()),
                 ),
               ],
               child: MaterialApp(
