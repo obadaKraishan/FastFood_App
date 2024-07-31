@@ -1,4 +1,5 @@
 // lib/presentation/screens/cart/cart_screen.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fastfood_app/data/models/cart_item_model.dart';
@@ -7,7 +8,19 @@ import 'package:fastfood_app/logic/blocs/cart/cart_event.dart';
 import 'package:fastfood_app/logic/blocs/cart/cart_state.dart';
 import 'package:fastfood_app/presentation/widgets/cart_item.dart';
 
-class CartScreen extends StatelessWidget {
+class CartScreen extends StatefulWidget {
+  @override
+  _CartScreenState createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Dispatch the LoadCart event to fetch the cart items when the screen is initialized
+    context.read<CartBloc>().add(LoadCart());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,16 +62,26 @@ class CartScreen extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Total:', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                          Text("\$${state.cart.items.fold<double>(0.0, (sum, item) => sum + item.price * item.quantity).toStringAsFixed(2)}", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                          Text('Total:', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
+                          Text("\$${state.cart.items.fold<double>(0.0, (sum, item) => sum + item.price * item.quantity).toStringAsFixed(2)}", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
                         ],
                       ),
                       SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () {
-                          // Navigate to payment screen
-                        },
-                        child: Text('Proceed to Checkout'),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            // Navigate to payment screen
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.redAccent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18.0),
+                            ),
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                          ),
+                          child: Text('Proceed to Checkout', style: TextStyle(color: Colors.white)),
+                        ),
                       ),
                     ],
                   ),

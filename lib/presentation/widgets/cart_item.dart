@@ -17,35 +17,42 @@ class CartItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      decoration: BoxDecoration(
+        color: Color(0xFF2A313F),
+        borderRadius: BorderRadius.circular(10),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(12.0),
         child: Row(
           children: [
-            Image.network(
-              cartItem.imageUrl,
-              width: 80,
-              height: 80,
-              fit: BoxFit.cover,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.network(
+                cartItem.imageUrl,
+                width: 100,
+                height: 100,
+                fit: BoxFit.contain,
+              ),
             ),
-            SizedBox(width: 16),
+            SizedBox(width: 20),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(cartItem.name, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  Text("\$${cartItem.price.toStringAsFixed(2)}"),
+                  Text(cartItem.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
+                  Text("\$${cartItem.price.toStringAsFixed(2)}", style: TextStyle(fontSize: 20, color: Colors.redAccent)),
                   Row(
                     children: [
                       IconButton(
                         onPressed: () => onQuantityChanged(cartItem.quantity - 1),
-                        icon: Icon(Icons.remove),
+                        icon: Icon(Icons.remove, color: Colors.white),
                       ),
-                      Text(cartItem.quantity.toString()),
+                      Text(cartItem.quantity.toString(), style: TextStyle(color: Colors.white)),
                       IconButton(
                         onPressed: () => onQuantityChanged(cartItem.quantity + 1),
-                        icon: Icon(Icons.add),
+                        icon: Icon(Icons.add, color: Colors.white),
                       ),
                     ],
                   ),
@@ -55,7 +62,7 @@ class CartItemWidget extends StatelessWidget {
             IconButton(
               onPressed: onRemove,
               icon: Icon(Icons.delete),
-              color: Colors.red,
+              color: Colors.redAccent,
             ),
           ],
         ),
