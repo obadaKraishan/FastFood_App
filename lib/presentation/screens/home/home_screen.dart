@@ -4,6 +4,8 @@ import 'package:fastfood_app/presentation/screens/home/category_screen.dart';
 import 'package:fastfood_app/presentation/screens/home/popular_screen.dart';
 import 'package:fastfood_app/presentation/widgets/featured_banner.dart';
 import 'package:fastfood_app/presentation/widgets/user_info_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -27,15 +29,34 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text('Home', style: TextStyle(color: Colors.white)),
         centerTitle: true,
         actions: [
-          badges.Badge(
-            position: badges.BadgePosition.topEnd(top: 0, end: 3),
-            badgeContent: Text(cartItemCount.toString(), style: TextStyle(color: Colors.white)),
-            child: IconButton(
-              icon: Icon(Icons.shopping_cart, color: Colors.white),
-              onPressed: () {
-                // Handle cart icon press
-              },
-            ),
+          StreamBuilder(
+            stream: FirebaseFirestore.instance
+                .collection('users')
+                .doc(FirebaseAuth.instance.currentUser!.uid)
+                .collection('cart')
+                .snapshots(),
+            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasData) {
+                final cartItemsCount = snapshot.data!.docs.length;
+                return badges.Badge(
+                  position: badges.BadgePosition.topEnd(top: 0, end: 3),
+                  badgeContent: Text(cartItemsCount.toString(), style: TextStyle(color: Colors.white)),
+                  child: IconButton(
+                    icon: Icon(Icons.shopping_cart, color: Colors.white),
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/cart');
+                    },
+                  ),
+                );
+              } else {
+                return IconButton(
+                  icon: Icon(Icons.shopping_cart, color: Colors.white),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/cart');
+                  },
+                );
+              }
+            },
           ),
         ],
       ),

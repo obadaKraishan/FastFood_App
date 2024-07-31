@@ -27,14 +27,11 @@ class CartItemWidget extends StatelessWidget {
         padding: const EdgeInsets.all(12.0),
         child: Row(
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.network(
-                cartItem.imageUrl,
-                width: 100,
-                height: 100,
-                fit: BoxFit.contain,
-              ),
+            Image.network(
+              cartItem.imageUrl,
+              width: 100,
+              height: 100,
+              fit: BoxFit.contain,
             ),
             SizedBox(width: 20),
             Expanded(
@@ -42,17 +39,19 @@ class CartItemWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(cartItem.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
-                  Text("\$${cartItem.price.toStringAsFixed(2)}", style: TextStyle(fontSize: 20, color: Colors.redAccent)),
+                  Text("\$${cartItem.price.toStringAsFixed(2)}", style: TextStyle(fontSize: 20, color: Colors.red)),
                   Row(
                     children: [
                       IconButton(
                         onPressed: () => onQuantityChanged(cartItem.quantity - 1),
-                        icon: Icon(Icons.remove, color: Colors.white),
+                        icon: Icon(Icons.remove),
+                        color: Colors.white,
                       ),
                       Text(cartItem.quantity.toString(), style: TextStyle(color: Colors.white)),
                       IconButton(
                         onPressed: () => onQuantityChanged(cartItem.quantity + 1),
-                        icon: Icon(Icons.add, color: Colors.white),
+                        icon: Icon(Icons.add),
+                        color: Colors.white,
                       ),
                     ],
                   ),
