@@ -1,4 +1,3 @@
-// lib/presentation/screens/home/popular_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fastfood_app/data/models/product_model.dart';
@@ -7,9 +6,17 @@ import 'package:fastfood_app/logic/blocs/product/product_bloc.dart';
 import 'package:fastfood_app/logic/blocs/product/product_event.dart';
 import 'package:fastfood_app/logic/blocs/product/product_state.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'product_details_screen.dart';
+import 'package:fastfood_app/logic/blocs/cart/cart_bloc.dart';
+import 'package:fastfood_app/logic/blocs/cart/cart_event.dart';
+import 'package:fastfood_app/data/models/cart_item_model.dart';
+import 'package:fastfood_app/presentation/screens/home/product_details_screen.dart';
+import 'package:badges/badges.dart' as badges;
 
 class PopularScreen extends StatelessWidget {
+  final Function incrementCartItemCount;
+
+  PopularScreen({required this.incrementCartItemCount});
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -49,7 +56,10 @@ class PopularScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ProductDetailsScreen(productId: product.id),
+                                builder: (context) => ProductDetailsScreen(
+                                  productId: product.id,
+                                  incrementCartItemCount: incrementCartItemCount,
+                                ),
                               ),
                             );
                           },
@@ -71,7 +81,12 @@ class PopularScreen extends StatelessWidget {
                                           topLeft: Radius.circular(10),
                                           topRight: Radius.circular(10),
                                         ),
-                                        child: Image.network(product.imageUrl, height: 160, width: 200, fit: BoxFit.contain),
+                                        child: Image.network(
+                                          product.imageUrl,
+                                          height: 160,
+                                          width: 200,
+                                          fit: BoxFit.contain,
+                                        ),
                                       ),
                                       Positioned(
                                         right: 8,
@@ -121,7 +136,26 @@ class PopularScreen extends StatelessWidget {
                                         SizedBox(
                                           width: double.infinity,
                                           child: ElevatedButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              final cartItem = CartItem(
+                                                id: product.id,
+                                                productId: product.id,
+                                                name: product.name,
+                                                price: product.price,
+                                                quantity: 1,
+                                                imageUrl: product.imageUrl,
+                                              );
+                                              context.read<CartBloc>().add(AddToCart(item: cartItem));
+
+                                              incrementCartItemCount();
+
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(
+                                                  content: Text('${product.name} added to cart'),
+                                                  duration: Duration(seconds: 2),
+                                                ),
+                                              );
+                                            },
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: Colors.redAccent,
                                               shape: RoundedRectangleBorder(
@@ -169,3 +203,4 @@ class PopularScreen extends StatelessWidget {
     );
   }
 }
+

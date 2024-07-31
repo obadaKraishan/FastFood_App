@@ -1,4 +1,3 @@
-// lib/presentation/widgets/product_list.dart
 import 'package:flutter/material.dart';
 import 'package:fastfood_app/data/models/product_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,6 +7,10 @@ import 'package:fastfood_app/logic/blocs/product/product_state.dart';
 import 'package:fastfood_app/presentation/widgets/product_list_item.dart';
 
 class ProductList extends StatelessWidget {
+  final Function incrementCartItemCount;
+
+  ProductList({required this.incrementCartItemCount});
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ProductBloc, ProductState>(
@@ -35,7 +38,7 @@ class ProductList extends StatelessWidget {
                   itemCount: products.length,
                   itemBuilder: (context, index) {
                     final product = products[index];
-                    return ProductListItem(product: product);
+                    return ProductListItem(product: product, incrementCartItemCount: incrementCartItemCount);
                   },
                 );
               }

@@ -1,4 +1,3 @@
-// lib/presentation/screens/products/products_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fastfood_app/presentation/widgets/custom_search_bar.dart';
@@ -13,8 +12,9 @@ import 'package:fastfood_app/data/repositories/product_repository.dart';
 
 class ProductsScreen extends StatelessWidget {
   final String? categoryId;
+  final Function incrementCartItemCount;
 
-  ProductsScreen({this.categoryId});
+  ProductsScreen({this.categoryId, required this.incrementCartItemCount});
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +63,7 @@ class ProductsScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 10,),
                   Expanded(
-                    child: ProductList(),
+                    child: ProductList(incrementCartItemCount: incrementCartItemCount),
                   ),
                 ],
               );

@@ -1,15 +1,18 @@
-// lib/presentation/screens/categories/categories_screen.dart
-import 'package:fastfood_app/data/models/category_model.dart';
-import 'package:fastfood_app/data/repositories/category_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:fastfood_app/data/models/category_model.dart';
+import 'package:fastfood_app/data/repositories/category_repository.dart'; // Add this import
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fastfood_app/presentation/widgets/custom_search_bar.dart';
 import 'package:fastfood_app/logic/blocs/category/category_bloc.dart';
-import 'package:fastfood_app/logic/blocs/category/category_state.dart';
 import 'package:fastfood_app/logic/blocs/category/category_event.dart';
+import 'package:fastfood_app/logic/blocs/category/category_state.dart';
 import 'package:fastfood_app/presentation/widgets/category_list_item.dart';
+import 'package:fastfood_app/presentation/widgets/custom_search_bar.dart';
 
 class CategoriesScreen extends StatelessWidget {
+  final Function incrementCartItemCount;
+
+  CategoriesScreen({required this.incrementCartItemCount});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,7 +65,10 @@ class CategoriesScreen extends StatelessWidget {
                           itemCount: categories.length,
                           itemBuilder: (context, index) {
                             final category = categories[index];
-                            return CategoryListItem(category: category);
+                            return CategoryListItem(
+                              category: category,
+                              incrementCartItemCount: incrementCartItemCount,
+                            );
                           },
                         );
                       }

@@ -1,4 +1,3 @@
-// lib/presentation/screens/home/category_screen.dart
 import 'package:fastfood_app/data/models/category_model.dart';
 import 'package:fastfood_app/data/repositories/category_repository.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +6,13 @@ import 'package:fastfood_app/logic/blocs/category/category_bloc.dart';
 import 'package:fastfood_app/logic/blocs/category/category_event.dart';
 import 'package:fastfood_app/logic/blocs/category/category_state.dart';
 import 'package:fastfood_app/presentation/screens/products/products_screen.dart';
+import 'package:fastfood_app/presentation/widgets/category_list_item.dart';
 
 class CategoryScreen extends StatelessWidget {
+  final Function incrementCartItemCount;
+
+  CategoryScreen({required this.incrementCartItemCount});
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -32,7 +36,10 @@ class CategoryScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ProductsScreen(categoryId: category.id),
+                          builder: (context) => ProductsScreen(
+                            categoryId: category.id,
+                            incrementCartItemCount: incrementCartItemCount,
+                          ),
                         ),
                       );
                     },

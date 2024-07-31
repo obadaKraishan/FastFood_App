@@ -2,6 +2,7 @@ import 'package:fastfood_app/data/models/addon_model.dart';
 import 'package:fastfood_app/data/models/drink_model.dart';
 import 'package:fastfood_app/data/models/ingredient_model.dart';
 import 'package:fastfood_app/data/repositories/addon_repository.dart';
+import 'package:fastfood_app/data/repositories/cart_repository.dart';
 import 'package:fastfood_app/data/repositories/drink_repository.dart';
 import 'package:fastfood_app/data/repositories/ingredient_repository.dart';
 import 'package:flutter/material.dart';
@@ -24,11 +25,16 @@ import 'package:fastfood_app/presentation/widgets/quantity_button.dart';
 import 'package:fastfood_app/presentation/widgets/ingredient_checkbox.dart';
 import 'package:fastfood_app/presentation/widgets/addon_checkbox.dart';
 import 'package:fastfood_app/presentation/widgets/drink_checkbox.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fastfood_app/logic/blocs/cart/cart_bloc.dart';
+import 'package:fastfood_app/logic/blocs/cart/cart_event.dart';
+import 'package:fastfood_app/data/models/cart_item_model.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   final String productId;
+  final Function incrementCartItemCount;
 
-  ProductDetailsScreen({required this.productId});
+  ProductDetailsScreen({required this.productId, required this.incrementCartItemCount});
 
   @override
   _ProductDetailsScreenState createState() => _ProductDetailsScreenState();
@@ -109,6 +115,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         ),
         BlocProvider(
           create: (context) => DrinkBloc(drinkRepository: context.read<DrinkRepository>()),
+        ),
+        BlocProvider(
+          create: (context) => CartBloc(cartRepository: context.read<CartRepository>()),
         ),
       ],
       child: Scaffold(
@@ -346,7 +355,24 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed: () {
-                              // Add to cart logic
+                              final cartItem = CartItem(
+                                id: widget.productId,
+                                productId: widget.productId,
+                                name: product.name,
+                                price: _totalPrice,
+                                quantity: _quantity,
+                                imageUrl: product.imageUrl,
+                              );
+                              context.read<CartBloc>().add(AddToCart(item: cartItem));
+
+                              widget.incrementCartItemCount();
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('${product.name} added to cart'),
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.redAccent,
@@ -360,7 +386,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               style: TextStyle(color: Colors.white, fontSize: 18),
                             ),
                           ),
-                        ),
+                        )
                       ],
                     ),
                   ),

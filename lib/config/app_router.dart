@@ -41,7 +41,12 @@ class AppRouter {
       case '/filter':
         return MaterialPageRoute(builder: (_) => FilterScreen());
       case '/popular':
-        return MaterialPageRoute(builder: (_) => PopularScreen());
+        return MaterialPageRoute(builder: (_) => PopularScreen(
+          incrementCartItemCount: () {
+            // Define your incrementCartItemCount function here
+            print("Cart item count incremented");
+          },
+        ));
       case '/nearby':
         return MaterialPageRoute(builder: (_) => NearbyRestaurantsScreen());
       case '/cart':
@@ -49,16 +54,31 @@ class AppRouter {
       case '/payment':
         return MaterialPageRoute(builder: (_) => PaymentScreen());
       case '/products':
-        return MaterialPageRoute(builder: (_) => ProductsScreen());
+        return MaterialPageRoute(builder: (_) => ProductsScreen(
+          incrementCartItemCount: () {
+            // Define your incrementCartItemCount function here
+            print("Cart item count incremented");
+          },
+        ));
       case '/categories':
-        return MaterialPageRoute(builder: (_) => CategoriesScreen());
+        return MaterialPageRoute(builder: (_) => CategoriesScreen(
+          incrementCartItemCount: () {
+            // Define your incrementCartItemCount function here
+            print("Cart item count incremented");
+          },
+        ));
       case '/register':
         return MaterialPageRoute(builder: (_) => RegisterScreen());
       case '/login':
         return MaterialPageRoute(builder: (_) => LoginScreen());
       case '/product-details':
-        final productId = settings.arguments as String;
-        return MaterialPageRoute(builder: (_) => ProductDetailsScreen(productId: productId));
+        final arguments = settings.arguments as Map<String, dynamic>;
+        final productId = arguments['productId'] as String;
+        final incrementCartItemCount = arguments['incrementCartItemCount'] as Function;
+        return MaterialPageRoute(builder: (_) => ProductDetailsScreen(
+          productId: productId,
+          incrementCartItemCount: incrementCartItemCount,
+        ));
       default:
         return MaterialPageRoute(builder: (_) => OnboardingScreen());
     }

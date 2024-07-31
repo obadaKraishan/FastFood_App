@@ -15,8 +15,8 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   final List<Widget> _screens = [
     HomeScreen(),
     Center(child: Text('Orders', style: TextStyle(color: Colors.white))),
-    CartScreen(), // Use the CartScreen here
-    ProfileScreen(), // Change here to use the ProfileScreen
+    CartScreen(),
+    ProfileScreen(),
   ];
 
   void _onTap(int index) {
@@ -28,18 +28,21 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF1C2029), // Dark background color
-      body: _screens[_currentIndex],
+      backgroundColor: Color(0xFF1C2029),
+      body: IndexedStack(
+        index: _currentIndex,
+        children: _screens,
+      ),
       bottomNavigationBar: SalomonBottomBar(
         currentIndex: _currentIndex,
         onTap: _onTap,
-        backgroundColor: Color(0xFF2A313F), // Bottom bar color
+        backgroundColor: Color(0xFF2A313F),
         items: [
           SalomonBottomBarItem(
             icon: Icon(Icons.home),
             title: Text("Home"),
             selectedColor: Colors.redAccent,
-            unselectedColor: Colors.grey, // Light gray for unselected icons
+            unselectedColor: Colors.grey,
           ),
           SalomonBottomBarItem(
             icon: Icon(Icons.list),

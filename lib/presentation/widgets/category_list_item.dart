@@ -1,12 +1,12 @@
-// lib/presentation/widgets/category_list_item.dart
 import 'package:flutter/material.dart';
 import 'package:fastfood_app/data/models/category_model.dart';
 import 'package:fastfood_app/presentation/screens/products/products_screen.dart';
 
 class CategoryListItem extends StatelessWidget {
   final CategoryModel category;
+  final Function incrementCartItemCount;
 
-  CategoryListItem({required this.category});
+  CategoryListItem({required this.category, required this.incrementCartItemCount});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,10 @@ class CategoryListItem extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ProductsScreen(categoryId: category.id),
+            builder: (context) => ProductsScreen(
+              categoryId: category.id,
+              incrementCartItemCount: incrementCartItemCount,
+            ),
           ),
         );
       },
@@ -47,7 +50,10 @@ class CategoryListItem extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ProductsScreen(categoryId: category.id),
+                      builder: (context) => ProductsScreen(
+                        categoryId: category.id,
+                        incrementCartItemCount: incrementCartItemCount,
+                      ),
                     ),
                   );
                 },
