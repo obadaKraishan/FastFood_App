@@ -27,6 +27,9 @@ import 'logic/blocs/user/user_bloc.dart';
 import 'services/stripe_service.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
   // Activate App Check
   await FirebaseAppCheck.instance.activate(
     androidProvider: AndroidProvider.playIntegrity,
@@ -35,12 +38,6 @@ void main() async {
 
   // Initialize Stripe
   StripeService.init();
-
-  // Activate App Check
-  await FirebaseAppCheck.instance.activate(
-    androidProvider: AndroidProvider.playIntegrity,
-    appleProvider: AppleProvider.deviceCheck,
-  );
 
   // Uncomment the following line if you need to use a debug token
   // FirebaseAppCheck.instance.setTokenAutoRefreshEnabled(true);
