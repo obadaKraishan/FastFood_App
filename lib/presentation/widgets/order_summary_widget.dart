@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fastfood_app/logic/blocs/cart/cart_bloc.dart';
+import 'package:fastfood_app/logic/blocs/cart/cart_event.dart';
 import 'package:fastfood_app/logic/blocs/cart/cart_state.dart';
 import 'package:fastfood_app/presentation/widgets/cart_item.dart';
 
@@ -10,6 +11,31 @@ class OrderSummaryWidget extends StatelessWidget {
     return BlocBuilder<CartBloc, CartState>(
       builder: (context, state) {
         if (state is CartLoaded) {
+          if (state.cart.items.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('No items to checkout', style: TextStyle(color: Colors.white, fontSize: 20)),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/home');
+                    },
+                    child: Text('Go to Home'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.redAccent,
+                      padding: EdgeInsets.symmetric(horizontal: 50, vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18.0),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
           final cart = state.cart;
           final double subtotal = cart.items.fold(0.0, (sum, item) => sum + item.price * item.quantity);
           final double deliveryFee = 5.0; // Assuming a flat delivery fee
@@ -20,11 +46,23 @@ class OrderSummaryWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Your Order', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
-              ...cart.items.map((item) => CartItemWidget(cartItem: item, onRemove: () {}, onQuantityChanged: (quantity) {})).toList(),
+              ...cart.items.map((item) => CartItemWidget(
+                cartItem: item,
+                onRemove: () {
+                  context.read<CartBloc>().add(RemoveFromCart(productId: item.productId));
+                },
+                onQuantityChanged: (quantity) {
+                  if (quantity > 0) {
+                    context.read<CartBloc>().add(UpdateCartItem(
+                      item: item.copyWith(quantity: quantity),
+                    ));
+                  }
+                },
+              )).toList(),
               SizedBox(height: 10),
               Divider(color: Colors.white70),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                padding: const EdgeInsets.symmetric(vertical: 10.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -66,8 +104,12 @@ class OrderSummaryWidget extends StatelessWidget {
               ),
             ],
           );
-        } else {
+        } else if (state is CartLoading) {
           return Center(child: CircularProgressIndicator());
+        } else if (state is CartError) {
+          return Center(child: Text(state.message, style: TextStyle(color: Colors.white)));
+        } else {
+          return Container();
         }
       },
     );
