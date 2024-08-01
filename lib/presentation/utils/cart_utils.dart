@@ -6,7 +6,7 @@ import 'package:fastfood_app/logic/blocs/cart/cart_event.dart';
 import 'package:fastfood_app/data/models/cart_item_model.dart';
 import 'package:fastfood_app/data/models/product_model.dart';
 
-void addToCart(BuildContext context, ProductModel product, Function incrementCartItemCount) {
+void addToCart(BuildContext context, ProductModel product, Function incrementCartItemCount, List<String> selectedAddons, List<String> selectedDrinks) {
   final user = FirebaseAuth.instance.currentUser;
   if (user == null) {
     print('No user logged in');
@@ -26,6 +26,8 @@ void addToCart(BuildContext context, ProductModel product, Function incrementCar
     price: product.price,
     quantity: 1,
     imageUrl: product.imageUrl,
+    addons: selectedAddons,
+    drinks: selectedDrinks,
   );
 
   print('Adding item to cart for user: ${user.uid}');

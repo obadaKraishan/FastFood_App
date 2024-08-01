@@ -1,13 +1,13 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fastfood_app/data/models/addon_model.dart';
 import 'package:fastfood_app/data/models/drink_model.dart';
 import 'package:fastfood_app/data/models/ingredient_model.dart';
+import 'package:fastfood_app/data/models/product_model.dart';
 import 'package:fastfood_app/data/repositories/addon_repository.dart';
 import 'package:fastfood_app/data/repositories/cart_repository.dart';
 import 'package:fastfood_app/data/repositories/drink_repository.dart';
 import 'package:fastfood_app/data/repositories/ingredient_repository.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fastfood_app/data/models/product_model.dart';
 import 'package:fastfood_app/data/repositories/product_repository.dart';
 import 'package:fastfood_app/logic/blocs/product/product_bloc.dart';
 import 'package:fastfood_app/logic/blocs/product/product_event.dart';
@@ -21,14 +21,13 @@ import 'package:fastfood_app/logic/blocs/addon/addon_state.dart';
 import 'package:fastfood_app/logic/blocs/drink/drink_bloc.dart';
 import 'package:fastfood_app/logic/blocs/drink/drink_event.dart';
 import 'package:fastfood_app/logic/blocs/drink/drink_state.dart';
+import 'package:fastfood_app/logic/blocs/cart/cart_bloc.dart';
+import 'package:fastfood_app/logic/blocs/cart/cart_event.dart';
+import 'package:fastfood_app/data/models/cart_item_model.dart';
 import 'package:fastfood_app/presentation/widgets/quantity_button.dart';
 import 'package:fastfood_app/presentation/widgets/ingredient_checkbox.dart';
 import 'package:fastfood_app/presentation/widgets/addon_checkbox.dart';
 import 'package:fastfood_app/presentation/widgets/drink_checkbox.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fastfood_app/logic/blocs/cart/cart_bloc.dart';
-import 'package:fastfood_app/logic/blocs/cart/cart_event.dart';
-import 'package:fastfood_app/data/models/cart_item_model.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   final String productId;
@@ -362,16 +361,36 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 price: _totalPrice,
                                 quantity: _quantity,
                                 imageUrl: product.imageUrl,
+                                addons: _selectedAddons,
+                                drinks: _selectedDrinks,
                               );
                               context.read<CartBloc>().add(AddToCart(item: cartItem));
 
                               widget.incrementCartItemCount();
 
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('${product.name} added to cart'),
-                                  duration: Duration(seconds: 2),
-                                ),
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text("Item Added to Cart"),
+                                    content: Text("${product.name} has been added to your cart."),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text("Continue Shopping"),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          Navigator.pushNamed(context, '/cart');
+                                        },
+                                        child: Text("Go to Cart"),
+                                      ),
+                                    ],
+                                  );
+                                },
                               );
                             },
                             style: ElevatedButton.styleFrom(

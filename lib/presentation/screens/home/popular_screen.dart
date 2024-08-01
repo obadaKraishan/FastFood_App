@@ -135,7 +135,7 @@ class PopularScreen extends StatelessWidget {
                                           width: double.infinity,
                                           child: ElevatedButton(
                                             onPressed: () {
-                                              addToCart(context, product, incrementCartItemCount);
+                                              addToCart(context, product, incrementCartItemCount, [], []);
                                             },
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: Colors.redAccent,

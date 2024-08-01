@@ -7,6 +7,8 @@ class CartItem {
   final double price;
   final String name;
   final String imageUrl;
+  final List<String> addons;
+  final List<String> drinks;
 
   CartItem({
     required this.id,
@@ -15,6 +17,8 @@ class CartItem {
     required this.price,
     required this.name,
     required this.imageUrl,
+    required this.addons,
+    required this.drinks,
   });
 
   Map<String, dynamic> toMap() {
@@ -25,6 +29,8 @@ class CartItem {
       'price': price,
       'name': name,
       'imageUrl': imageUrl,
+      'addons': addons,
+      'drinks': drinks,
     };
   }
 
@@ -36,6 +42,8 @@ class CartItem {
       price: map['price'],
       name: map['name'],
       imageUrl: map['imageUrl'],
+      addons: List<String>.from(map['addons']),
+      drinks: List<String>.from(map['drinks']),
     );
   }
 
@@ -46,6 +54,8 @@ class CartItem {
     double? price,
     String? name,
     String? imageUrl,
+    List<String>? addons,
+    List<String>? drinks,
   }) {
     return CartItem(
       id: id ?? this.id,
@@ -54,6 +64,8 @@ class CartItem {
       price: price ?? this.price,
       name: name ?? this.name,
       imageUrl: imageUrl ?? this.imageUrl,
+      addons: addons ?? this.addons,
+      drinks: drinks ?? this.drinks,
     );
   }
 }
