@@ -41,32 +41,22 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   }
 
   Future<void> _onRemoveFromCart(RemoveFromCart event, Emitter<CartState> emit) async {
-    if (state is CartLoaded) {
-      try {
-        final cart = (state as CartLoaded).cart;
-        final updatedItems = cart.items.where((item) => item.productId != event.productId).toList();
-        final updatedCart = Cart(userId: cart.userId, items: updatedItems);
-
-        await cartRepository.updateCart(updatedCart);
-        emit(CartLoaded(cart: updatedCart));
-      } catch (e) {
-        print('Failed to remove item from cart: $e');
-        emit(CartError(message: e.toString()));
-      }
+    try {
+      await cartRepository.removeItemFromCart(event.productId);
+      final cart = await cartRepository.getCart();
+      emit(CartLoaded(cart: cart));
+    } catch (e) {
+      print('Failed to remove item from cart: $e');
+      emit(CartError(message: e.toString()));
     }
   }
 
   Future<void> _onUpdateCartItem(UpdateCartItem event, Emitter<CartState> emit) async {
     if (state is CartLoaded) {
       try {
-        final cart = (state as CartLoaded).cart;
-        final updatedItems = cart.items.map((item) {
-          return item.productId == event.item.productId ? event.item : item;
-        }).toList();
-        final updatedCart = Cart(userId: cart.userId, items: updatedItems);
-
-        await cartRepository.updateCart(updatedCart);
-        emit(CartLoaded(cart: updatedCart));
+        await cartRepository.updateCartItem(event.item);
+        final cart = await cartRepository.getCart();
+        emit(CartLoaded(cart: cart));
       } catch (e) {
         print('Failed to update cart item: $e');
         emit(CartError(message: e.toString()));
@@ -77,13 +67,9 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   Future<void> _onClearCart(ClearCart event, Emitter<CartState> emit) async {
     if (state is CartLoaded) {
       try {
-        final cart = (state as CartLoaded).cart;
-        final updatedCart = Cart(userId: cart.userId, items: []);
-
-        await cartRepository.updateCart(updatedCart);
-        emit(CartLoaded(cart: updatedCart));
+        await cartRepository.clearCart((state as CartLoaded).cart.userId);
+        emit(CartLoaded(cart: Cart(userId: (state as CartLoaded).cart.userId, items: [])));
       } catch (e) {
-        print('Failed to clear cart: $e');
         emit(CartError(message: e.toString()));
       }
     }

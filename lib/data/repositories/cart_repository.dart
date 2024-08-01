@@ -52,4 +52,33 @@ class CartRepository {
       print('Failed to add item to cart: $error');
     });
   }
+
+  Future<void> removeItemFromCart(String productId) async {
+    final user = firebaseAuth.currentUser;
+    if (user == null) {
+      throw Exception('User not logged in');
+    }
+
+    final cartItemRef = firestore.collection('users').doc(user.uid).collection('cart').where('productId', isEqualTo: productId);
+    final cartItem = await cartItemRef.get();
+    for (var doc in cartItem.docs) {
+      await doc.reference.delete();
+    }
+  }
+
+  Future<void> updateCartItem(CartItem cartItem) async {
+    final user = firebaseAuth.currentUser;
+    if (user == null) {
+      throw Exception('User not logged in');
+    }
+
+    await firestore.collection('users').doc(user.uid).collection('cart').doc(cartItem.id).update(cartItem.toMap());
+  }
+
+  Future<void> clearCart(String userId) async {
+    final cartItems = await firestore.collection('users').doc(userId).collection('cart').get();
+    for (var doc in cartItems.docs) {
+      await doc.reference.delete();
+    }
+  }
 }
