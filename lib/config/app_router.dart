@@ -1,6 +1,7 @@
 import 'package:fastfood_app/presentation/screens/auth/register_screen.dart';
 import 'package:fastfood_app/presentation/screens/auth/login_screen.dart';
 import 'package:fastfood_app/presentation/screens/categories/categories_screen.dart';
+import 'package:fastfood_app/presentation/screens/checkout/add_payment_method_screen.dart';
 import 'package:fastfood_app/presentation/screens/products/products_screen.dart';
 import 'package:fastfood_app/presentation/widgets/custom_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
@@ -56,6 +57,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => CheckoutScreen());
       case '/payment':
         return MaterialPageRoute(builder: (_) => PaymentScreen());
+      case '/add-payment-method':
+        return MaterialPageRoute(builder: (_) => AddPaymentMethodScreen());
       case '/products':
         return MaterialPageRoute(builder: (_) => ProductsScreen(
           incrementCartItemCount: () {

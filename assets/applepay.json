@@ -1,0 +1,27 @@
+{
+  "provider": "apple_pay",
+  "data": {
+    "merchantIdentifier": "merchant.com.example",
+    "displayName": "Example Merchant",
+    "merchantCapabilities": ["3DS", "EMV", "Credit", "Debit"],
+    "supportedNetworks": ["amex", "discover", "masterCard", "visa"],
+    "countryCode": "US",
+    "currencyCode": "USD",
+    "requiredBillingContactFields": ["postalAddress", "email", "phone"],
+    "requiredShippingContactFields": ["postalAddress", "email", "phone"],
+    "shippingMethods": [
+      {
+        "label": "Standard Shipping",
+        "amount": "0.00",
+        "identifier": "standard",
+        "detail": "Arrives in 5 to 7 days"
+      },
+      {
+        "label": "Express Shipping",
+        "amount": "10.00",
+        "identifier": "express",
+        "detail": "Arrives in 1 to 2 days"
+      }
+    ]
+  }
+}

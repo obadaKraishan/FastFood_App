@@ -22,13 +22,19 @@ import 'package:fastfood_app/presentation/utils/theme_provider.dart';
 import 'package:fastfood_app/presentation/screens/app_entry_point.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:provider/provider.dart';
-
 import 'logic/blocs/auth/auth_bloc.dart';
 import 'logic/blocs/user/user_bloc.dart';
+import 'services/stripe_service.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  // Activate App Check
+  await FirebaseAppCheck.instance.activate(
+    androidProvider: AndroidProvider.playIntegrity,
+    appleProvider: AppleProvider.deviceCheck,
+  );
+
+  // Initialize Stripe
+  StripeService.init();
 
   // Activate App Check
   await FirebaseAppCheck.instance.activate(

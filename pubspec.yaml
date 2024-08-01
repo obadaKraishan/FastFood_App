@@ -31,6 +31,9 @@ dependencies:
   local_auth: ^2.2.0
   fluttertoast: ^8.2.6
   badges: ^3.1.2
+  flutter_stripe: ^11.0.0
+  flutter_paypal: ^0.2.1
+  pay: ^2.0.0
 
 dev_dependencies:
   flutter_test:
@@ -46,6 +49,8 @@ flutter:
     - assets/images/onboarding/onboarding-bg.png
     - assets/images/onboarding/delivery_person.png
     - assets/images/food_placeholder.png
+    - assets/gpay.json
+    - assets/applepay.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

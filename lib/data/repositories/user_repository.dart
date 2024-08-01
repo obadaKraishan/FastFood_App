@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fastfood_app/data/models/user_model.dart';
+import 'package:fastfood_app/data/models/payment_method_model.dart';
 
 class UserRepository {
   final FirebaseAuth _firebaseAuth;
@@ -52,5 +53,11 @@ class UserRepository {
 
   Future<void> logoutUser() async {
     await _firebaseAuth.signOut();
+  }
+
+  Future<void> updateSelectedPaymentMethod(String userId, PaymentMethod paymentMethod) async {
+    await _firestore.collection('users').doc(userId).update({
+      'selectedPaymentMethod': paymentMethod.toMap(),
+    });
   }
 }
