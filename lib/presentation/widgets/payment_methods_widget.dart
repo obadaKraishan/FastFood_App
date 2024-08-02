@@ -62,6 +62,23 @@ class _PaymentMethodsWidgetState extends State<PaymentMethodsWidget> {
     widget.onPaymentMethodSelected(methodId);
   }
 
+  IconData _getPaymentMethodIcon(String type) {
+    switch (type) {
+      case 'Card':
+        return Icons.credit_card;
+      case 'PayPal':
+        return Icons.paypal_outlined;
+      case 'GooglePay':
+        return Icons.account_balance_wallet;
+      case 'ApplePay':
+        return Icons.apple;
+      case 'Cash':
+        return Icons.attach_money;
+      default:
+        return Icons.payment;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -70,15 +87,7 @@ class _PaymentMethodsWidgetState extends State<PaymentMethodsWidget> {
         Text('Payment Method', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
         SizedBox(height: 10),
         ..._paymentMethods.map((method) => ListTile(
-          leading: method.type == 'Card'
-              ? Icon(Icons.credit_card, color: Colors.white)
-              : method.type == 'PayPal'
-              ? Icon(Icons.account_balance_wallet, color: Colors.white)
-              : method.type == 'GooglePay'
-              ? Icon(Icons.account_balance_wallet, color: Colors.white)
-              : method.type == 'ApplePay'
-              ? Icon(Icons.account_balance_wallet, color: Colors.white)
-              : Icon(Icons.attach_money, color: Colors.white),
+          leading: Icon(_getPaymentMethodIcon(method.type), color: Colors.white),
           title: Text(method.name, style: TextStyle(color: Colors.white)),
           trailing: Radio(
             value: method.id,
