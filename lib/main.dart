@@ -30,6 +30,9 @@ import 'logic/blocs/auth/auth_bloc.dart';
 import 'logic/blocs/user/user_bloc.dart';
 import 'services/stripe_service.dart';
 
+import 'package:fastfood_app/data/repositories/order_repository.dart';
+import 'package:fastfood_app/logic/blocs/order/order_bloc.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -87,7 +90,7 @@ class MyApp extends StatelessWidget {
               RepositoryProvider<CartRepository>(
                 create: (context) => CartRepository(firestore: context.read<FirestoreProvider>().firestore, firebaseAuth: FirebaseAuth.instance),
               ),
-              RepositoryProvider<OrderRepository>( // Add this line
+              RepositoryProvider<OrderRepository>(
                 create: (context) => OrderRepository(),
               ),
             ],
@@ -102,7 +105,7 @@ class MyApp extends StatelessWidget {
                 BlocProvider(
                   create: (context) => CartBloc(cartRepository: context.read<CartRepository>()),
                 ),
-                BlocProvider( // Add this block
+                BlocProvider(
                   create: (context) => OrderBloc(orderRepository: context.read<OrderRepository>()),
                 ),
               ],
@@ -121,3 +124,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
