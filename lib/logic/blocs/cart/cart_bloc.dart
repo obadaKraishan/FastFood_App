@@ -3,7 +3,6 @@ import 'package:equatable/equatable.dart';
 import 'package:fastfood_app/data/models/cart_item_model.dart';
 import 'package:fastfood_app/data/models/cart_model.dart';
 import 'package:fastfood_app/data/repositories/cart_repository.dart';
-
 import 'cart_event.dart';
 import 'cart_state.dart';
 
@@ -68,7 +67,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     if (state is CartLoaded) {
       try {
         await cartRepository.clearCart((state as CartLoaded).cart.userId);
-        emit(CartLoaded(cart: Cart(userId: (state as CartLoaded).cart.userId, items: [])));
+        emit(CartLoaded(cart: Cart(userId: (state as CartLoaded).cart.userId, items: [], tax: 0.0, deliveryFee: 0.0)));
       } catch (e) {
         emit(CartError(message: e.toString()));
       }

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 class OrderNoteWidget extends StatelessWidget {
+  final TextEditingController noteController;
+
+  OrderNoteWidget({required this.noteController});
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -9,6 +13,7 @@ class OrderNoteWidget extends StatelessWidget {
         Text('Add a Note', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
         SizedBox(height: 10),
         TextField(
+          controller: noteController,
           maxLines: 4,
           decoration: InputDecoration(
             hintText: 'Add any special instructions here',

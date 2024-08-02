@@ -7,6 +7,7 @@ import 'package:fastfood_app/logic/blocs/cart/cart_state.dart';
 import 'package:fastfood_app/logic/blocs/order/order_bloc.dart';
 import 'package:fastfood_app/logic/blocs/order/order_event.dart';
 import 'package:fastfood_app/logic/blocs/order/order_state.dart';
+import 'package:fastfood_app/logic/blocs/cart/cart_event.dart';
 import 'package:fastfood_app/data/models/order_model.dart' as custom_order;
 import 'package:fastfood_app/presentation/screens/checkout/confirmation_screen.dart';
 import 'package:fastfood_app/presentation/widgets/order_note_widget.dart';
@@ -25,6 +26,7 @@ class CheckoutScreen extends StatefulWidget {
 class _CheckoutScreenState extends State<CheckoutScreen> {
   final PaymentService paymentService = PaymentService();
   String _selectedPaymentMethod = 'Cash on Delivery';
+  final TextEditingController noteController = TextEditingController();
 
   void _onPaymentMethodSelected(String method) {
     setState(() {
@@ -35,11 +37,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   void _handlePlaceOrder() async {
     final cartState = context.read<CartBloc>().state;
     if (cartState is CartLoaded) {
+      final double deliveryFee = 5.0; // Assuming a flat delivery fee
+      final double taxes = cartState.cart.totalPrice * 0.1; // Assuming 10% tax
+      final double totalPrice = cartState.cart.totalPrice + deliveryFee + taxes;
+
       final order = custom_order.Order(
         id: firestore.FirebaseFirestore.instance.collection('orders').doc().id,
         userId: FirebaseAuth.instance.currentUser!.uid,
         orderItems: cartState.cart.items.map((item) => item.toMap()).toList(),
-        totalPrice: cartState.cart.totalPrice,
+        totalPrice: totalPrice,
         status: 'processing',
         createdAt: firestore.Timestamp.now(),
         estimatedDeliveryTime: firestore.Timestamp.fromDate(
@@ -47,6 +53,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         ),
         paymentMethod: _selectedPaymentMethod,
         deliveryAddress: 'User delivery address', // You should fetch the actual delivery address
+        note: noteController.text, // Adding the note to the order
       );
 
       context.read<OrderBloc>().add(CreateOrderEvent(order: order));
@@ -64,6 +71,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       body: BlocListener<OrderBloc, OrderState>(
         listener: (context, state) {
           if (state is OrderSuccess) {
+            context.read<CartBloc>().add(ClearCart());
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -86,7 +94,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 SizedBox(height: 20),
                 OrderSummaryWidget(),
                 SizedBox(height: 20),
-                OrderNoteWidget(),
+                OrderNoteWidget(noteController: noteController),
                 SizedBox(height: 20),
                 PaymentMethodsWidget(
                   onPaymentMethodSelected: _onPaymentMethodSelected,

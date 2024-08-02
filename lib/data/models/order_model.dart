@@ -1,5 +1,3 @@
-// lib/data/models/order_model.dart
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Order {
@@ -12,6 +10,7 @@ class Order {
   final Timestamp estimatedDeliveryTime;
   final String paymentMethod;
   final String deliveryAddress;
+  final String note;  // New field for order note
 
   Order({
     required this.id,
@@ -23,6 +22,7 @@ class Order {
     required this.estimatedDeliveryTime,
     required this.paymentMethod,
     required this.deliveryAddress,
+    required this.note,  // New field for order note
   });
 
   Map<String, dynamic> toMap() {
@@ -36,6 +36,7 @@ class Order {
       'estimatedDeliveryTime': estimatedDeliveryTime,
       'paymentMethod': paymentMethod,
       'deliveryAddress': deliveryAddress,
+      'note': note,  // New field for order note
     };
   }
 
@@ -50,6 +51,7 @@ class Order {
       estimatedDeliveryTime: map['estimatedDeliveryTime'],
       paymentMethod: map['paymentMethod'],
       deliveryAddress: map['deliveryAddress'],
+      note: map['note'],  // New field for order note
     );
   }
 }
