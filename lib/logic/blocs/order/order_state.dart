@@ -1,5 +1,3 @@
-// lib/logic/blocs/order/order_state.dart
-
 import 'package:equatable/equatable.dart';
 import 'package:fastfood_app/data/models/order_model.dart';
 
@@ -14,6 +12,15 @@ class OrderInitial extends OrderState {}
 
 class OrderLoading extends OrderState {}
 
+class OrderLoaded extends OrderState {
+  final List<Order> orders;
+
+  OrderLoaded({required this.orders});
+
+  @override
+  List<Object> get props => [orders];
+}
+
 class OrderSuccess extends OrderState {
   final Order order;
 
@@ -23,11 +30,11 @@ class OrderSuccess extends OrderState {
   List<Object> get props => [order];
 }
 
-class OrderFailure extends OrderState {
-  final String error;
+class OrderError extends OrderState {
+  final String message;
 
-  OrderFailure({required this.error});
+  OrderError({required this.message});
 
   @override
-  List<Object> get props => [error];
+  List<Object> get props => [message];
 }

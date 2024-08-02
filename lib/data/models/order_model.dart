@@ -10,7 +10,7 @@ class Order {
   final Timestamp estimatedDeliveryTime;
   final String paymentMethod;
   final String deliveryAddress;
-  final String note;  // New field for order note
+  final String? note;
 
   Order({
     required this.id,
@@ -22,7 +22,7 @@ class Order {
     required this.estimatedDeliveryTime,
     required this.paymentMethod,
     required this.deliveryAddress,
-    required this.note,  // New field for order note
+    this.note,
   });
 
   Map<String, dynamic> toMap() {
@@ -36,7 +36,7 @@ class Order {
       'estimatedDeliveryTime': estimatedDeliveryTime,
       'paymentMethod': paymentMethod,
       'deliveryAddress': deliveryAddress,
-      'note': note,  // New field for order note
+      'note': note,
     };
   }
 
@@ -51,7 +51,7 @@ class Order {
       estimatedDeliveryTime: map['estimatedDeliveryTime'],
       paymentMethod: map['paymentMethod'],
       deliveryAddress: map['deliveryAddress'],
-      note: map['note'],  // New field for order note
+      note: map['note'],
     );
   }
 }

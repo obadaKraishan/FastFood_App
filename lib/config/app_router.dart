@@ -1,10 +1,12 @@
+import 'package:fastfood_app/data/models/order_model.dart';
 import 'package:fastfood_app/presentation/screens/auth/register_screen.dart';
 import 'package:fastfood_app/presentation/screens/auth/login_screen.dart';
 import 'package:fastfood_app/presentation/screens/categories/categories_screen.dart';
 import 'package:fastfood_app/presentation/screens/checkout/add_payment_method_screen.dart';
 import 'package:fastfood_app/presentation/screens/products/products_screen.dart';
+import 'package:fastfood_app/presentation/screens/profile/order_details_screen.dart';
+import 'package:fastfood_app/presentation/screens/profile/orders_screen.dart';
 import 'package:fastfood_app/presentation/widgets/custom_bottom_navigation_bar.dart';
-import 'package:flutter/material.dart';
 import 'package:fastfood_app/presentation/screens/onboarding/onboarding_screen.dart';
 import 'package:fastfood_app/presentation/screens/home/home_screen.dart';
 import 'package:fastfood_app/presentation/screens/profile/profile_screen.dart';
@@ -20,6 +22,7 @@ import 'package:fastfood_app/presentation/screens/cart/cart_screen.dart';
 import 'package:fastfood_app/presentation/screens/payment/payment_screen.dart';
 import 'package:fastfood_app/presentation/screens/home/product_details_screen.dart';
 import 'package:fastfood_app/presentation/screens/checkout/checkout_screen.dart';
+import 'package:flutter/material.dart';
 
 class AppRouter {
   Route<dynamic> generateRoute(RouteSettings settings) {
@@ -77,6 +80,12 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => RegisterScreen());
       case '/login':
         return MaterialPageRoute(builder: (_) => LoginScreen());
+      case '/orders':
+        return MaterialPageRoute(builder: (_) => OrdersScreen());
+      case '/order-details':
+        final arguments = settings.arguments as Map<String, dynamic>;
+        final order = arguments['order'] as Order;
+        return MaterialPageRoute(builder: (_) => OrderDetailsScreen(order: order));
       case '/product-details':
         final arguments = settings.arguments as Map<String, dynamic>;
         final productId = arguments['productId'] as String;

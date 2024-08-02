@@ -6,7 +6,7 @@ import 'package:fastfood_app/logic/blocs/cart/cart_bloc.dart';
 import 'package:fastfood_app/logic/blocs/cart/cart_state.dart';
 import 'package:fastfood_app/logic/blocs/order/order_bloc.dart';
 import 'package:fastfood_app/logic/blocs/order/order_event.dart';
-import 'package:fastfood_app/logic/blocs/order/order_state.dart';
+import 'package:fastfood_app/logic/blocs/order/order_state.dart'; // Ensure this import
 import 'package:fastfood_app/logic/blocs/cart/cart_event.dart';
 import 'package:fastfood_app/data/models/order_model.dart' as custom_order;
 import 'package:fastfood_app/presentation/screens/checkout/confirmation_screen.dart';
@@ -78,9 +78,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 builder: (context) => ConfirmationScreen(order: state.order),
               ),
             );
-          } else if (state is OrderFailure) {
+          } else if (state is OrderError) { // Use OrderError here
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Order failed: ${state.error}')),
+              SnackBar(content: Text('Order failed: ${state.message}')),
             );
           }
         },

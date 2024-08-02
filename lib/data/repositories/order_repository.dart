@@ -13,4 +13,9 @@ class OrderRepository {
   Future<void> createOrder(model.Order order) async {
     await _firestore.collection('orders').doc(order.id).set(order.toMap());
   }
+
+  Future<List<model.Order>> getOrders(String userId) async {
+    final snapshot = await _firestore.collection('orders').where('userId', isEqualTo: userId).get();
+    return snapshot.docs.map((doc) => model.Order.fromMap(doc.data())).toList();
+  }
 }

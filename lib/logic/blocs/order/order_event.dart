@@ -1,5 +1,3 @@
-// lib/logic/blocs/order/order_event.dart
-
 import 'package:equatable/equatable.dart';
 import 'package:fastfood_app/data/models/order_model.dart';
 
@@ -17,4 +15,13 @@ class CreateOrderEvent extends OrderEvent {
 
   @override
   List<Object> get props => [order];
+}
+
+class LoadOrdersEvent extends OrderEvent {
+  final String userId;
+
+  LoadOrdersEvent({required this.userId});
+
+  @override
+  List<Object> get props => [userId];
 }

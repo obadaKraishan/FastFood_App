@@ -1,4 +1,5 @@
 import 'package:fastfood_app/presentation/screens/home/home_screen.dart';
+import 'package:fastfood_app/presentation/screens/profile/orders_screen.dart';
 import 'package:fastfood_app/presentation/screens/profile/profile_screen.dart';
 import 'package:fastfood_app/presentation/screens/cart/cart_screen.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
 
   final List<Widget> _screens = [
     HomeScreen(),
-    Center(child: Text('Orders', style: TextStyle(color: Colors.white))),
+    OrdersScreen(),
     CartScreen(),
     ProfileScreen(),
   ];
