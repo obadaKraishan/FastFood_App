@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fastfood_app/data/models/cart_item_model.dart';
 import 'package:fastfood_app/logic/blocs/cart/cart_bloc.dart';
 import 'package:fastfood_app/logic/blocs/cart/cart_event.dart';
 import 'package:fastfood_app/logic/blocs/cart/cart_state.dart';
@@ -30,6 +29,10 @@ class _CartScreenState extends State<CartScreen> {
           if (state is CartLoading) {
             return Center(child: CircularProgressIndicator());
           } else if (state is CartLoaded) {
+            if (state.cart.items.isEmpty) {
+              return _buildEmptyCart(context);
+            }
+
             return Column(
               children: [
                 Expanded(
@@ -60,8 +63,8 @@ class _CartScreenState extends State<CartScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Total:', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
-                          Text("\$${state.cart.items.fold<double>(0.0, (sum, item) => sum + item.price * item.quantity).toStringAsFixed(2)}", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
+                          Text('Total:', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                          Text("\$${state.cart.items.fold<double>(0.0, (sum, item) => sum + item.price * item.quantity).toStringAsFixed(2)}", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                         ],
                       ),
                       SizedBox(height: 16),
@@ -92,6 +95,45 @@ class _CartScreenState extends State<CartScreen> {
             return Container();
           }
         },
+      ),
+    );
+  }
+
+  Widget _buildEmptyCart(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            'assets/images/food_placeholder.png', // Make sure you have an appropriate image in your assets
+            height: 340,
+          ),
+          SizedBox(height: 20),
+          Text(
+            'Your cart is empty!',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 10),
+          Text(
+            'Looks like you haven\'t added anything to your cart yet.',
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 30),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/categories');
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.redAccent,
+              padding: EdgeInsets.symmetric(horizontal: 50, vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18.0),
+              ),
+            ),
+            child: Text('Start Shopping', style: TextStyle(color: Colors.white)),
+          ),
+        ],
       ),
     );
   }

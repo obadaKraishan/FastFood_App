@@ -39,17 +39,32 @@ class ConfirmationScreen extends StatelessWidget {
               style: TextStyle(color: Colors.white, fontSize: 16),
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/home');
-              },
-              child: Text('Continue Shopping'),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/home');
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                ),
+                child: Text('Continue Shopping', style: TextStyle(color: Colors.white)),
+              ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/orders');
-              },
-              child: Text('View Orders'),
+            SizedBox(height: 10),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/orders');
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                ),
+                child: Text('View Orders', style: TextStyle(color: Colors.white)),
+              ),
             ),
           ],
         ),
