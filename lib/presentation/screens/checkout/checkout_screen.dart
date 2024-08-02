@@ -1,11 +1,20 @@
-import 'package:fastfood_app/presentation/widgets/order_note_widget.dart';
-import 'package:fastfood_app/presentation/widgets/order_summary_widget.dart';
-import 'package:fastfood_app/presentation/widgets/payment_methods_widget.dart';
-import 'package:fastfood_app/presentation/widgets/user_address_widget.dart';
+// lib/presentation/screens/checkout/checkout_screen.dart
+
+import 'package:cloud_firestore/cloud_firestore.dart' as firestore;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fastfood_app/logic/blocs/cart/cart_bloc.dart';
 import 'package:fastfood_app/logic/blocs/cart/cart_state.dart';
+import 'package:fastfood_app/logic/blocs/order/order_bloc.dart';
+import 'package:fastfood_app/logic/blocs/order/order_event.dart';
+import 'package:fastfood_app/logic/blocs/order/order_state.dart';
+import 'package:fastfood_app/data/models/order_model.dart' as custom_order;
+import 'package:fastfood_app/presentation/screens/checkout/confirmation_screen.dart';
+import 'package:fastfood_app/presentation/widgets/order_note_widget.dart';
+import 'package:fastfood_app/presentation/widgets/order_summary_widget.dart';
+import 'package:fastfood_app/presentation/widgets/payment_methods_widget.dart';
+import 'package:fastfood_app/presentation/widgets/user_address_widget.dart';
 import 'package:fastfood_app/services/payment_service.dart';
 import 'package:fastfood_app/services/stripe_service.dart';
 import 'package:fastfood_app/services/paypal_service.dart';
@@ -26,24 +35,23 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   void _handlePlaceOrder() async {
-    switch (_selectedPaymentMethod) {
-      case 'COD':
-      // Handle Cash on Delivery
-        break;
-      case 'PayPal':
-        await PayPalService.payWithPayPal(context);
-        break;
-      case 'GooglePay':
-        await paymentService.payWithGooglePay(context);
-        break;
-      case 'ApplePay':
-        await paymentService.payWithApplePay(context);
-        break;
-      case 'Card':
-        await StripeService.payWithCard(amount: '10.00', currency: 'USD'); // Example amount and currency
-        break;
-      default:
-        print('Unknown payment method selected');
+    final cartState = context.read<CartBloc>().state;
+    if (cartState is CartLoaded) {
+      final order = custom_order.Order(
+        id: firestore.FirebaseFirestore.instance.collection('orders').doc().id,
+        userId: FirebaseAuth.instance.currentUser!.uid,
+        orderItems: cartState.cart.items.map((item) => item.toMap()).toList(),
+        totalPrice: cartState.cart.totalPrice,
+        status: 'processing',
+        createdAt: firestore.Timestamp.now(),
+        estimatedDeliveryTime: firestore.Timestamp.fromDate(
+          DateTime.now().add(Duration(hours: 1)),
+        ),
+        paymentMethod: _selectedPaymentMethod,
+        deliveryAddress: 'User delivery address', // You should fetch the actual delivery address
+      );
+
+      context.read<OrderBloc>().add(CreateOrderEvent(order: order));
     }
   }
 
@@ -55,37 +63,53 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         backgroundColor: Color(0xFF1C2029),
       ),
       backgroundColor: Color(0xFF1C2029),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              UserAddressWidget(),
-              SizedBox(height: 20),
-              OrderSummaryWidget(),
-              SizedBox(height: 20),
-              OrderNoteWidget(),
-              SizedBox(height: 20),
-              PaymentMethodsWidget(
-                onPaymentMethodSelected: _onPaymentMethodSelected,
+      body: BlocListener<OrderBloc, OrderState>(
+        listener: (context, state) {
+          if (state is OrderSuccess) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ConfirmationScreen(order: state.order),
               ),
-              SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _handlePlaceOrder,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.redAccent,
-                    padding: EdgeInsets.symmetric(vertical: 15),
-                  ),
-                  child: Text(
-                    'Place Order',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
+            );
+          } else if (state is OrderFailure) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Order failed: ${state.error}')),
+            );
+          }
+        },
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                UserAddressWidget(),
+                SizedBox(height: 20),
+                OrderSummaryWidget(),
+                SizedBox(height: 20),
+                OrderNoteWidget(),
+                SizedBox(height: 20),
+                PaymentMethodsWidget(
+                  onPaymentMethodSelected: _onPaymentMethodSelected,
+                ),
+                SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _handlePlaceOrder,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.redAccent,
+                      padding: EdgeInsets.symmetric(vertical: 15),
+                    ),
+                    child: Text(
+                      'Place Order',
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

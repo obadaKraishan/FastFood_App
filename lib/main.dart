@@ -3,9 +3,13 @@ import 'package:fastfood_app/data/models/cart_model.dart';
 import 'package:fastfood_app/data/repositories/auth_repository.dart';
 import 'package:fastfood_app/data/repositories/cart_repository.dart';
 import 'package:fastfood_app/data/repositories/user_repository.dart';
+import 'package:fastfood_app/data/repositories/order_repository.dart'; // Add this line
 import 'package:fastfood_app/logic/blocs/cart/cart_bloc.dart';
 import 'package:fastfood_app/logic/blocs/cart/cart_event.dart';
 import 'package:fastfood_app/logic/blocs/cart/cart_state.dart';
+import 'package:fastfood_app/logic/blocs/order/order_bloc.dart'; // Add this line
+import 'package:fastfood_app/logic/blocs/order/order_event.dart'; // Add this line
+import 'package:fastfood_app/logic/blocs/order/order_state.dart'; // Add this line
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -83,6 +87,9 @@ class MyApp extends StatelessWidget {
               RepositoryProvider<CartRepository>(
                 create: (context) => CartRepository(firestore: context.read<FirestoreProvider>().firestore, firebaseAuth: FirebaseAuth.instance),
               ),
+              RepositoryProvider<OrderRepository>( // Add this line
+                create: (context) => OrderRepository(),
+              ),
             ],
             child: MultiBlocProvider(
               providers: [
@@ -94,6 +101,9 @@ class MyApp extends StatelessWidget {
                 ),
                 BlocProvider(
                   create: (context) => CartBloc(cartRepository: context.read<CartRepository>()),
+                ),
+                BlocProvider( // Add this block
+                  create: (context) => OrderBloc(orderRepository: context.read<OrderRepository>()),
                 ),
               ],
               child: MaterialApp(

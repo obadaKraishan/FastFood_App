@@ -1,3 +1,5 @@
+// lib/data/models/cart_model.dart
+
 import 'package:fastfood_app/data/models/cart_item_model.dart';
 
 class Cart {
@@ -5,6 +7,10 @@ class Cart {
   final List<CartItem> items;
 
   Cart({required this.userId, required this.items});
+
+  double get totalPrice {
+    return items.fold(0, (total, item) => total + item.price * item.quantity);
+  }
 
   Map<String, dynamic> toMap() {
     return {
