@@ -1,5 +1,3 @@
-// lib/services/paypal_service.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_paypal/flutter_paypal.dart';
 

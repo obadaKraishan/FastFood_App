@@ -10,14 +10,50 @@ class PaymentService {
     ),
   ];
 
-  void onGooglePayResult(paymentResult) {
-    // Handle the payment result
-    print('Google Pay Result: $paymentResult');
+  Future<void> payWithGooglePay(BuildContext context) async {
+    final result = await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Google Pay'),
+          content: Text('Complete your payment using Google Pay.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+    if (result == true) {
+      print('Google Pay payment completed');
+    }
   }
 
-  void onApplePayResult(paymentResult) {
-    // Handle the payment result
-    print('Apple Pay Result: $paymentResult');
+  Future<void> payWithApplePay(BuildContext context) async {
+    final result = await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Apple Pay'),
+          content: Text('Complete your payment using Apple Pay.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+    if (result == true) {
+      print('Apple Pay payment completed');
+    }
   }
 
   Widget buildGooglePayButton(BuildContext context) {
@@ -28,7 +64,9 @@ class PaymentService {
           return GooglePayButton(
             paymentConfiguration: snapshot.data!,
             paymentItems: _paymentItems,
-            onPaymentResult: onGooglePayResult,
+            onPaymentResult: (result) {
+              print('Google Pay Result: $result');
+            },
             loadingIndicator: const Center(
               child: CircularProgressIndicator(),
             ),
@@ -50,7 +88,9 @@ class PaymentService {
           return ApplePayButton(
             paymentConfiguration: snapshot.data!,
             paymentItems: _paymentItems,
-            onPaymentResult: onApplePayResult,
+            onPaymentResult: (result) {
+              print('Apple Pay Result: $result');
+            },
             loadingIndicator: const Center(
               child: CircularProgressIndicator(),
             ),
