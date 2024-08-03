@@ -1,37 +1,28 @@
-import 'package:fastfood_app/data/models/cart_item_model.dart';
-import 'package:fastfood_app/data/models/cart_model.dart';
-import 'package:fastfood_app/data/repositories/auth_repository.dart';
-import 'package:fastfood_app/data/repositories/cart_repository.dart';
-import 'package:fastfood_app/data/repositories/user_repository.dart';
-import 'package:fastfood_app/data/repositories/order_repository.dart'; // Add this line
-import 'package:fastfood_app/logic/blocs/cart/cart_bloc.dart';
-import 'package:fastfood_app/logic/blocs/cart/cart_event.dart';
-import 'package:fastfood_app/logic/blocs/cart/cart_state.dart';
-import 'package:fastfood_app/logic/blocs/order/order_bloc.dart'; // Add this line
-import 'package:fastfood_app/logic/blocs/order/order_event.dart'; // Add this line
-import 'package:fastfood_app/logic/blocs/order/order_state.dart'; // Add this line
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:fastfood_app/data/providers/firestore_provider.dart';
-import 'package:fastfood_app/data/repositories/category_repository.dart';
-import 'package:fastfood_app/data/repositories/product_repository.dart';
-import 'package:fastfood_app/data/repositories/ingredient_repository.dart';
-import 'package:fastfood_app/data/repositories/addon_repository.dart';
-import 'package:fastfood_app/data/repositories/drink_repository.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fastfood_app/logic/blocs/order/order_bloc.dart';
+import 'package:fastfood_app/data/repositories/order_repository.dart';
 import 'package:fastfood_app/config/app_router.dart';
 import 'package:fastfood_app/config/theme.dart';
 import 'package:fastfood_app/presentation/utils/theme_provider.dart';
 import 'package:fastfood_app/presentation/screens/app_entry_point.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:provider/provider.dart';
-import 'logic/blocs/auth/auth_bloc.dart';
-import 'logic/blocs/user/user_bloc.dart';
-import 'services/stripe_service.dart';
-
-import 'package:fastfood_app/data/repositories/order_repository.dart';
-import 'package:fastfood_app/logic/blocs/order/order_bloc.dart';
+import 'package:fastfood_app/data/repositories/auth_repository.dart';
+import 'package:fastfood_app/data/repositories/cart_repository.dart';
+import 'package:fastfood_app/data/repositories/user_repository.dart';
+import 'package:fastfood_app/data/providers/firestore_provider.dart';
+import 'package:fastfood_app/data/repositories/category_repository.dart';
+import 'package:fastfood_app/data/repositories/product_repository.dart';
+import 'package:fastfood_app/data/repositories/ingredient_repository.dart';
+import 'package:fastfood_app/data/repositories/addon_repository.dart';
+import 'package:fastfood_app/data/repositories/drink_repository.dart';
+import 'package:fastfood_app/logic/blocs/auth/auth_bloc.dart';
+import 'package:fastfood_app/logic/blocs/user/user_bloc.dart';
+import 'package:fastfood_app/logic/blocs/cart/cart_bloc.dart';
+import 'package:fastfood_app/services/stripe_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,9 +36,6 @@ void main() async {
 
   // Initialize Stripe
   StripeService.init();
-
-  // Uncomment the following line if you need to use a debug token
-  // FirebaseAppCheck.instance.setTokenAutoRefreshEnabled(true);
 
   runApp(MyApp());
 }
@@ -91,7 +79,7 @@ class MyApp extends StatelessWidget {
                 create: (context) => CartRepository(firestore: context.read<FirestoreProvider>().firestore, firebaseAuth: FirebaseAuth.instance),
               ),
               RepositoryProvider<OrderRepository>(
-                create: (context) => OrderRepository(),
+                create: (context) => OrderRepository(firestoreInstance: context.read<FirestoreProvider>().firestore, auth: FirebaseAuth.instance),
               ),
             ],
             child: MultiBlocProvider(
@@ -124,4 +112,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
