@@ -18,4 +18,8 @@ class OrderRepository {
     final snapshot = await _firestore.collection('orders').where('userId', isEqualTo: userId).get();
     return snapshot.docs.map((doc) => model.Order.fromMap(doc.data())).toList();
   }
+
+  Future<void> updateOrderStatus(String orderId, String status) async {
+    await _firestore.collection('orders').doc(orderId).update({'status': status});
+  }
 }
