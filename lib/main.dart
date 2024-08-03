@@ -3,7 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fastfood_app/logic/blocs/order/order_bloc.dart';
+import 'package:fastfood_app/logic/blocs/wishlist/wishlist_bloc.dart'; // Import WishlistBloc
 import 'package:fastfood_app/data/repositories/order_repository.dart';
+import 'package:fastfood_app/data/repositories/user_repository.dart';
+import 'package:fastfood_app/data/repositories/product_repository.dart'; // Import ProductRepository
 import 'package:fastfood_app/config/app_router.dart';
 import 'package:fastfood_app/config/theme.dart';
 import 'package:fastfood_app/presentation/utils/theme_provider.dart';
@@ -12,10 +15,8 @@ import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:provider/provider.dart';
 import 'package:fastfood_app/data/repositories/auth_repository.dart';
 import 'package:fastfood_app/data/repositories/cart_repository.dart';
-import 'package:fastfood_app/data/repositories/user_repository.dart';
 import 'package:fastfood_app/data/providers/firestore_provider.dart';
 import 'package:fastfood_app/data/repositories/category_repository.dart';
-import 'package:fastfood_app/data/repositories/product_repository.dart';
 import 'package:fastfood_app/data/repositories/ingredient_repository.dart';
 import 'package:fastfood_app/data/repositories/addon_repository.dart';
 import 'package:fastfood_app/data/repositories/drink_repository.dart';
@@ -95,6 +96,12 @@ class MyApp extends StatelessWidget {
                 ),
                 BlocProvider(
                   create: (context) => OrderBloc(orderRepository: context.read<OrderRepository>()),
+                ),
+                BlocProvider(
+                  create: (context) => WishlistBloc(
+                    userRepository: context.read<UserRepository>(),
+                    productRepository: context.read<ProductRepository>(),
+                  ),
                 ),
               ],
               child: MaterialApp(
