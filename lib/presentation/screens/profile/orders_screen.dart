@@ -6,14 +6,16 @@ import 'package:fastfood_app/logic/blocs/order/order_bloc.dart';
 import 'package:fastfood_app/logic/blocs/order/order_state.dart';
 import 'package:fastfood_app/logic/blocs/order/order_event.dart';
 import 'package:fastfood_app/presentation/widgets/order_list_item.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class OrdersScreen extends StatelessWidget {
+  final RefreshController _refreshController = RefreshController(initialRefresh: false);
+
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
-      // Handle the case when the user is not logged in.
       return Scaffold(
         appBar: AppBar(
           title: Text('My Orders'),
@@ -50,12 +52,19 @@ class OrdersScreen extends StatelessWidget {
                   ),
                 );
               }
-              return ListView.builder(
-                itemCount: orders.length,
-                itemBuilder: (context, index) {
-                  final order = orders[index];
-                  return OrderListItem(order: order);
+              return SmartRefresher(
+                controller: _refreshController,
+                onRefresh: () {
+                  BlocProvider.of<OrderBloc>(context).add(LoadOrdersEvent(userId: user.uid));
+                  _refreshController.refreshCompleted();
                 },
+                child: ListView.builder(
+                  itemCount: orders.length,
+                  itemBuilder: (context, index) {
+                    final order = orders[index];
+                    return OrderListItem(order: order);
+                  },
+                ),
               );
             } else if (state is OrderError) {
               return Center(child: Text(state.message));
