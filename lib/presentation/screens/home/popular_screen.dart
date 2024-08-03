@@ -86,14 +86,6 @@ class PopularScreen extends StatelessWidget {
                                           fit: BoxFit.contain,
                                         ),
                                       ),
-                                      Positioned(
-                                        right: 8,
-                                        top: 8,
-                                        child: CircleAvatar(
-                                          backgroundColor: Colors.white,
-                                          child: Icon(Icons.favorite, color: Colors.red),
-                                        ),
-                                      ),
                                     ],
                                   ),
                                   Padding(

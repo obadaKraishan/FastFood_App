@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fastfood_app/data/models/addon_model.dart';
 import 'package:fastfood_app/data/models/drink_model.dart';
 import 'package:fastfood_app/data/models/ingredient_model.dart';
 import 'package:fastfood_app/data/models/product_model.dart';
+import 'package:fastfood_app/data/models/cart_item_model.dart';
 import 'package:fastfood_app/data/repositories/addon_repository.dart';
 import 'package:fastfood_app/data/repositories/cart_repository.dart';
 import 'package:fastfood_app/data/repositories/drink_repository.dart';
@@ -23,7 +26,6 @@ import 'package:fastfood_app/logic/blocs/drink/drink_event.dart';
 import 'package:fastfood_app/logic/blocs/drink/drink_state.dart';
 import 'package:fastfood_app/logic/blocs/cart/cart_bloc.dart';
 import 'package:fastfood_app/logic/blocs/cart/cart_event.dart';
-import 'package:fastfood_app/data/models/cart_item_model.dart';
 import 'package:fastfood_app/presentation/widgets/quantity_button.dart';
 import 'package:fastfood_app/presentation/widgets/ingredient_checkbox.dart';
 import 'package:fastfood_app/presentation/widgets/addon_checkbox.dart';
@@ -52,6 +54,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   List<DrinkModel> _drinks = [];
 
   bool _isProductLoaded = false;
+  bool _isWishlistLoading = true;
+  bool _isInWishlist = false;
 
   @override
   void initState() {
@@ -60,7 +64,49 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       if (_isProductLoaded) {
         _updateTotalPrice();
       }
+      _loadWishlistStatus();
     });
+  }
+
+  Future<void> _loadWishlistStatus() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      final userData = userDoc.data();
+      if (userData != null && userData['wishlist'] != null) {
+        setState(() {
+          _isInWishlist = List<String>.from(userData['wishlist']).contains(widget.productId);
+          _isWishlistLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _toggleWishlist() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final userDoc = FirebaseFirestore.instance.collection('users').doc(user.uid);
+      final userData = await userDoc.get();
+
+      List<String> wishlist = List<String>.from(userData['wishlist'] ?? []);
+
+      setState(() {
+        _isWishlistLoading = true;
+      });
+
+      if (_isInWishlist) {
+        wishlist.remove(widget.productId);
+      } else {
+        wishlist.add(widget.productId);
+      }
+
+      await userDoc.update({'wishlist': wishlist});
+
+      setState(() {
+        _isInWishlist = !_isInWishlist;
+        _isWishlistLoading = false;
+      });
+    }
   }
 
   void _incrementQuantity() {
@@ -131,6 +177,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           ),
           title: Text('Product Details', style: TextStyle(color: Colors.white)),
           centerTitle: true,
+          actions: [
+            IconButton(
+              icon: _isWishlistLoading
+                  ? CircularProgressIndicator(color: Colors.white)
+                  : Icon(_isInWishlist ? Icons.favorite : Icons.favorite_border, color: Colors.redAccent),
+              onPressed: _isWishlistLoading ? null : _toggleWishlist,
+            ),
+          ],
         ),
         body: BlocBuilder<ProductBloc, ProductState>(
           builder: (context, state) {
@@ -143,7 +197,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 _basePrice = product.price;
                 _isProductLoaded = true;
 
-                // Call _updateTotalPrice after the first frame is built to avoid calling setState during build
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   _updateTotalPrice();
                 });
