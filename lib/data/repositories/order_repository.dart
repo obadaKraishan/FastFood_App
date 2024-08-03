@@ -26,5 +26,6 @@ class OrderRepository {
 
   Future<void> updateOrderStatus(String orderId, String status) async {
     await _firestore.collection('orders').doc(orderId).update({'status': status});
+    print("Order $orderId status updated to $status"); // Add logging
   }
 }

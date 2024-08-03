@@ -13,7 +13,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
         await orderRepository.createOrder(event.order);
         emit(OrderSuccess(order: event.order));
       } catch (e) {
-        emit(OrderError(message: e.toString())); // Use OrderError here
+        emit(OrderError(message: e.toString()));
       }
     });
 
@@ -23,7 +23,18 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
         final orders = await orderRepository.getOrders(event.userId);
         emit(OrderLoaded(orders: orders));
       } catch (e) {
-        emit(OrderError(message: e.toString())); // Use OrderError here
+        emit(OrderError(message: e.toString()));
+      }
+    });
+
+    on<UpdateOrderStatusEvent>((event, emit) async {
+      emit(OrderLoading());
+      try {
+        await orderRepository.updateOrderStatus(event.orderId, event.status);
+        final orders = await orderRepository.getOrders(event.userId); // Ensure the orders are reloaded
+        emit(OrderLoaded(orders: orders));
+      } catch (e) {
+        emit(OrderError(message: e.toString()));
       }
     });
   }

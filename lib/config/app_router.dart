@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fastfood_app/data/models/order_model.dart';
 import 'package:fastfood_app/data/repositories/order_repository.dart';
-import 'package:fastfood_app/logic/blocs/order_details/order_details_bloc.dart';
-import 'package:fastfood_app/logic/blocs/order_details/order_details_event.dart';
+import 'package:fastfood_app/logic/blocs/order/order_bloc.dart';
 import 'package:fastfood_app/presentation/screens/auth/register_screen.dart';
 import 'package:fastfood_app/presentation/screens/auth/login_screen.dart';
 import 'package:fastfood_app/presentation/screens/categories/categories_screen.dart';
@@ -52,7 +51,6 @@ class AppRouter {
       case '/popular':
         return MaterialPageRoute(builder: (_) => PopularScreen(
           incrementCartItemCount: () {
-            // Define your incrementCartItemCount function here
             print("Cart item count incremented");
           },
         ));
@@ -69,14 +67,12 @@ class AppRouter {
       case '/products':
         return MaterialPageRoute(builder: (_) => ProductsScreen(
           incrementCartItemCount: () {
-            // Define your incrementCartItemCount function here
             print("Cart item count incremented");
           },
         ));
       case '/categories':
         return MaterialPageRoute(builder: (_) => CategoriesScreen(
           incrementCartItemCount: () {
-            // Define your incrementCartItemCount function here
             print("Cart item count incremented");
           },
         ));
@@ -89,12 +85,12 @@ class AppRouter {
       case '/order-details':
         final arguments = settings.arguments as Map<String, dynamic>;
         final orderId = arguments['orderId'] as String;
-        return MaterialPageRoute(builder: (_) => BlocProvider(
-          create: (context) => OrderDetailsBloc(
-            orderRepository: RepositoryProvider.of<OrderRepository>(context),
-          )..add(FetchOrderDetails(orderId: orderId)),
-          child: OrderDetailsScreen(),
-        ));
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider.value(
+            value: BlocProvider.of<OrderBloc>(_),
+            child: OrderDetailsScreen(orderId: orderId),
+          ),
+        );
       case '/product-details':
         final arguments = settings.arguments as Map<String, dynamic>;
         final productId = arguments['productId'] as String;

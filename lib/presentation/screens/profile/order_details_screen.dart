@@ -1,15 +1,22 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fastfood_app/data/models/cart_item_model.dart';
+import 'package:fastfood_app/data/models/order_model.dart' as model;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fastfood_app/logic/blocs/cart/cart_bloc.dart';
 import 'package:fastfood_app/logic/blocs/cart/cart_event.dart';
-import 'package:fastfood_app/logic/blocs/order_details/order_details_bloc.dart';
-import 'package:fastfood_app/logic/blocs/order_details/order_details_event.dart';
-import 'package:fastfood_app/logic/blocs/order_details/order_details_state.dart';
+import 'package:fastfood_app/logic/blocs/order/order_bloc.dart';
+import 'package:fastfood_app/logic/blocs/order/order_event.dart';
+import 'package:fastfood_app/logic/blocs/order/order_state.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class OrderDetailsScreen extends StatelessWidget {
-  void _showCancelOrderConfirmation(BuildContext context) {
+  final String orderId;
+
+  OrderDetailsScreen({required this.orderId, Key? key}) : super(key: key);
+
+  void _showCancelOrderConfirmation(BuildContext context, model.Order order) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -24,9 +31,10 @@ class OrderDetailsScreen extends StatelessWidget {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                BlocProvider.of<OrderDetailsBloc>(context).add(UpdateOrderStatus(
-                  orderId: (BlocProvider.of<OrderDetailsBloc>(context).state as OrderDetailsLoaded).order.id,
+                BlocProvider.of<OrderBloc>(context).add(UpdateOrderStatusEvent(
+                  orderId: order.id,
                   status: 'canceled',
+                  userId: order.userId,
                 ));
               },
               child: Text('Yes'),
@@ -37,11 +45,11 @@ class OrderDetailsScreen extends StatelessWidget {
     );
   }
 
-  void _showReorderConfirmation(BuildContext context, List<Map<String, dynamic>> orderItems) {
+  void _showReorderConfirmation(BuildContext context, model.Order order) {
     final cartBloc = BlocProvider.of<CartBloc>(context);
     cartBloc.add(ClearCart());
 
-    for (var item in orderItems) {
+    for (var item in order.orderItems) {
       cartBloc.add(AddToCart(item: CartItem.fromMap(item)));
     }
 
@@ -83,17 +91,41 @@ class OrderDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return Center(child: Text('User not logged in'));
+    }
+    final userId = user.uid;
+
+    BlocProvider.of<OrderBloc>(context).add(LoadOrdersEvent(userId: userId));
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Order Details'),
         backgroundColor: Color(0xFF1C2029),
       ),
-      body: BlocBuilder<OrderDetailsBloc, OrderDetailsState>(
+      body: BlocBuilder<OrderBloc, OrderState>(
         builder: (context, state) {
-          if (state is OrderDetailsLoading) {
+          if (state is OrderLoading) {
             return Center(child: CircularProgressIndicator());
-          } else if (state is OrderDetailsLoaded) {
-            final updatedOrder = state.order;
+          } else if (state is OrderLoaded) {
+            final updatedOrder = state.orders.firstWhere(
+                  (o) => o.id == orderId,
+              orElse: () => model.Order(
+                id: '',
+                userId: '',
+                orderItems: [],
+                totalPrice: 0.0,
+                status: '',
+                createdAt: Timestamp.now(),
+                estimatedDeliveryTime: Timestamp.now(),
+                paymentMethod: '',
+                deliveryAddress: '',
+              ),
+            );
+            if (updatedOrder.id.isEmpty) {
+              return Center(child: Text('Order not found'));
+            }
             return Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -106,7 +138,6 @@ class OrderDetailsScreen extends StatelessWidget {
                   SizedBox(height: 20),
                   Text('Items:', style: TextStyle(color: Colors.white, fontSize: 16)),
                   ...updatedOrder.orderItems.map((item) {
-                    // Ensure addons and drinks are handled as lists
                     List<dynamic> addons = item['addons'] is List ? item['addons'] : [];
                     List<dynamic> drinks = item['drinks'] is List ? item['drinks'] : [];
 
@@ -139,7 +170,7 @@ class OrderDetailsScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () => _showCancelOrderConfirmation(context),
+                          onPressed: () => _showCancelOrderConfirmation(context, updatedOrder),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.redAccent,
                             padding: EdgeInsets.symmetric(vertical: 16),
@@ -150,7 +181,7 @@ class OrderDetailsScreen extends StatelessWidget {
                       SizedBox(width: 10),
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () => _showReorderConfirmation(context, updatedOrder.orderItems),
+                          onPressed: () => _showReorderConfirmation(context, updatedOrder),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.redAccent,
                             padding: EdgeInsets.symmetric(vertical: 16),
@@ -175,7 +206,7 @@ class OrderDetailsScreen extends StatelessWidget {
                 ],
               ),
             );
-          } else if (state is OrderDetailsError) {
+          } else if (state is OrderError) {
             return Center(child: Text(state.message));
           } else {
             return Container();
