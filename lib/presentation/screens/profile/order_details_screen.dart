@@ -170,9 +170,11 @@ class OrderDetailsScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () => _showCancelOrderConfirmation(context, updatedOrder),
+                          onPressed: updatedOrder.status == 'canceled'
+                              ? null
+                              : () => _showCancelOrderConfirmation(context, updatedOrder),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.redAccent,
+                            backgroundColor: updatedOrder.status == 'canceled' ? Colors.grey : Colors.redAccent,
                             padding: EdgeInsets.symmetric(vertical: 16),
                           ),
                           child: Text('Cancel Order', style: TextStyle(color: Colors.white)),
