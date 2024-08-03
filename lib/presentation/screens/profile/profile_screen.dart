@@ -17,9 +17,6 @@ import 'dart:io';
 class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    User? currentUser = FirebaseAuth.instance.currentUser;
-    print("Current User: $currentUser");
-
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
@@ -29,7 +26,20 @@ class ProfileScreen extends StatelessWidget {
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
       ),
-      body: currentUser == null ? _buildGuestView(context) : _buildUserView(context, currentUser.uid),
+      body: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+          final user = snapshot.data;
+          if (user == null) {
+            return _buildGuestView(context);
+          } else {
+            return _buildUserView(context, user.uid);
+          }
+        },
+      ),
     );
   }
 

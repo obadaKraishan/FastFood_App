@@ -60,4 +60,40 @@ class UserRepository {
       'selectedPaymentMethod': paymentMethod.toMap(),
     });
   }
+
+  // Wishlist methods
+  Future<List<String>> getWishlist(String userId) async {
+    try {
+      DocumentSnapshot doc = await _firestore.collection('users').doc(userId).get();
+      if (doc.exists) {
+        UserModel user = UserModel.fromFirestore(doc);
+        return user.wishlist;
+      } else {
+        return [];
+      }
+    } catch (e) {
+      print("Error getting wishlist from Firestore: $e");
+      return [];
+    }
+  }
+
+  Future<void> addToWishlist(String userId, String productId) async {
+    try {
+      await _firestore.collection('users').doc(userId).update({
+        'wishlist': FieldValue.arrayUnion([productId]),
+      });
+    } catch (e) {
+      print("Error adding to wishlist: $e");
+    }
+  }
+
+  Future<void> removeFromWishlist(String userId, String productId) async {
+    try {
+      await _firestore.collection('users').doc(userId).update({
+        'wishlist': FieldValue.arrayRemove([productId]),
+      });
+    } catch (e) {
+      print("Error removing from wishlist: $e");
+    }
+  }
 }

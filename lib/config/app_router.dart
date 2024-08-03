@@ -26,6 +26,7 @@ import 'package:fastfood_app/presentation/screens/cart/cart_screen.dart';
 import 'package:fastfood_app/presentation/screens/payment/payment_screen.dart';
 import 'package:fastfood_app/presentation/screens/home/product_details_screen.dart';
 import 'package:fastfood_app/presentation/screens/checkout/checkout_screen.dart';
+import 'package:fastfood_app/presentation/screens/profile/wishlist_screen.dart'; // Import WishlistScreen
 
 class AppRouter {
   Route<dynamic> generateRoute(RouteSettings settings) {
@@ -99,6 +100,8 @@ class AppRouter {
           productId: productId,
           incrementCartItemCount: incrementCartItemCount,
         ));
+      case '/wishlist': // Add the route for WishlistScreen
+        return MaterialPageRoute(builder: (_) => WishlistScreen());
       default:
         return MaterialPageRoute(builder: (_) => OnboardingScreen());
     }

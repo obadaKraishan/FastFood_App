@@ -40,6 +40,20 @@ class ProfileOptions extends StatelessWidget {
             Navigator.pushNamed(context, '/language');
           },
         ),
+        ProfileOptionItem(
+          icon: Icons.favorite,
+          text: 'Wishlist',
+          onTap: () {
+            Navigator.pushNamed(context, '/wishlist');
+          },
+        ),
+        ProfileOptionItem(
+          icon: Icons.shopping_bag,
+          text: 'Orders',
+          onTap: () {
+            Navigator.pushNamed(context, '/orders');
+          },
+        ),
       ],
     );
   }

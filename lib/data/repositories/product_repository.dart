@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fastfood_app/data/models/product_model.dart';
 import 'package:fastfood_app/data/providers/firestore_provider.dart';
 
@@ -24,7 +25,13 @@ class ProductRepository {
   }
 
   Future<ProductModel> getProductById(String productId) async {
-    return await _firestoreProvider.getProductById(productId);
+    DocumentSnapshot doc = await _firestoreProvider.getProductById(productId);
+    // Ensure the document exists and the data can be cast to a Map
+    if (doc.exists) {
+      return ProductModel.fromMap(doc.data() as Map<String, dynamic>);
+    } else {
+      throw Exception('Product not found');
+    }
   }
 
   Stream<List<ProductModel>> getProductsByCategory(String categoryId) {

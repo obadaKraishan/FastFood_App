@@ -66,9 +66,8 @@ class FirestoreProvider {
     });
   }
 
-  Future<ProductModel> getProductById(String productId) async {
-    final doc = await _firestore.collection('products').doc(productId).get();
-    return ProductModel.fromMap(doc.data() as Map<String, dynamic>);
+  Future<DocumentSnapshot> getProductById(String productId) {
+    return _firestore.collection('products').doc(productId).get();
   }
 
   Stream<List<IngredientModel>> getIngredientsByIds(List<String> ingredientIds) {
