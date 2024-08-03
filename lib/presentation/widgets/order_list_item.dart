@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fastfood_app/data/models/order_model.dart';
+import 'package:fastfood_app/logic/blocs/order_details/order_details_bloc.dart';
+import 'package:fastfood_app/logic/blocs/order_details/order_details_event.dart';
+import 'package:fastfood_app/data/repositories/order_repository.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fastfood_app/presentation/screens/profile/order_details_screen.dart';
 
 class OrderListItem extends StatelessWidget {
@@ -17,7 +21,12 @@ class OrderListItem extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => OrderDetailsScreen(order: order),
+            builder: (context) => BlocProvider(
+              create: (context) => OrderDetailsBloc(
+                orderRepository: RepositoryProvider.of<OrderRepository>(context),
+              )..add(FetchOrderDetails(orderId: order.id)),
+              child: OrderDetailsScreen(),
+            ),
           ),
         );
       },
