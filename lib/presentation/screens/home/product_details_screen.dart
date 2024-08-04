@@ -5,6 +5,7 @@ import 'package:fastfood_app/data/models/addon_model.dart';
 import 'package:fastfood_app/data/models/drink_model.dart';
 import 'package:fastfood_app/data/models/ingredient_model.dart';
 import 'package:fastfood_app/data/models/product_model.dart';
+import 'package:fastfood_app/data/models/cart_item_model.dart';
 import 'package:fastfood_app/data/repositories/addon_repository.dart';
 import 'package:fastfood_app/data/repositories/cart_repository.dart';
 import 'package:fastfood_app/data/repositories/drink_repository.dart';
@@ -26,7 +27,6 @@ import 'package:fastfood_app/logic/blocs/drink/drink_state.dart';
 import 'package:fastfood_app/logic/blocs/cart/cart_bloc.dart';
 import 'package:fastfood_app/logic/blocs/cart/cart_event.dart';
 import 'package:fastfood_app/logic/blocs/wishlist/wishlist_bloc.dart';
-import 'package:fastfood_app/data/models/cart_item_model.dart';
 import 'package:fastfood_app/presentation/widgets/quantity_button.dart';
 import 'package:fastfood_app/presentation/widgets/ingredient_checkbox.dart';
 import 'package:fastfood_app/presentation/widgets/addon_checkbox.dart';
@@ -54,12 +54,15 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   List<AddonModel> _addons = [];
   List<DrinkModel> _drinks = [];
   bool _isWishlistItem = false;
-
   bool _isProductLoaded = false;
 
   @override
   void initState() {
     super.initState();
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      context.read<WishlistBloc>().add(LoadWishlistEvent(userId: user.uid));
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_isProductLoaded) {
         _updateTotalPrice();
@@ -85,17 +88,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   void _updateTotalPrice() {
     if (_basePrice == null) return;
-
     double price = _basePrice!;
-
     for (var addonId in _selectedAddons) {
       price += _addons.firstWhere((addon) => addon.id == addonId).price;
     }
-
     for (var drinkId in _selectedDrinks) {
       price += _drinks.firstWhere((drink) => drink.id == drinkId).price;
     }
-
     setState(() {
       _totalPrice = price * _quantity;
     });
@@ -103,21 +102,16 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   }
 
   void _toggleWishlist(String userId) {
-    setState(() {
-      _isWishlistItem = !_isWishlistItem;
-    });
-
     if (_isWishlistItem) {
-      context.read<WishlistBloc>().add(AddToWishlistEvent(userId: userId, productId: widget.productId));
-    } else {
       context.read<WishlistBloc>().add(RemoveFromWishlistEvent(userId: userId, productId: widget.productId));
+    } else {
+      context.read<WishlistBloc>().add(AddToWishlistEvent(userId: userId, productId: widget.productId));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -156,14 +150,20 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           title: Text('Product Details', style: TextStyle(color: Colors.white)),
           centerTitle: true,
           actions: [
-            if (user != null)
-              IconButton(
-                icon: Icon(
-                  _isWishlistItem ? Icons.favorite : Icons.favorite_border,
-                  color: _isWishlistItem ? Colors.red : Colors.white,
-                ),
-                onPressed: () => _toggleWishlist(user.uid),
-              ),
+            BlocBuilder<WishlistBloc, WishlistState>(
+              builder: (context, state) {
+                if (state is WishlistLoaded) {
+                  _isWishlistItem = state.wishlist.any((product) => product.id == widget.productId);
+                }
+                return IconButton(
+                  icon: Icon(
+                    _isWishlistItem ? Icons.favorite : Icons.favorite_border,
+                    color: _isWishlistItem ? Colors.red : Colors.white,
+                  ),
+                  onPressed: user != null ? () => _toggleWishlist(user.uid) : null,
+                );
+              },
+            ),
           ],
         ),
         body: BlocBuilder<ProductBloc, ProductState>(
@@ -176,18 +176,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               if (!_isProductLoaded) {
                 _basePrice = product.price;
                 _isProductLoaded = true;
-
-                // Check if the product is in the wishlist
                 if (user != null) {
                   context.read<WishlistBloc>().add(LoadWishlistEvent(userId: user.uid));
                 }
-
-                // Call _updateTotalPrice after the first frame is built to avoid calling setState during build
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   _updateTotalPrice();
                 });
               }
-
               context.read<IngredientBloc>().add(LoadIngredientsByProduct(ingredientIds: product.ingredientIds));
               context.read<AddonBloc>().add(LoadAddonsByProduct(addonIds: product.addonIds));
               context.read<DrinkBloc>().add(LoadDrinksByProduct(drinkIds: product.drinkIds));
@@ -404,9 +399,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 drinks: _selectedDrinks,
                               );
                               context.read<CartBloc>().add(AddToCart(item: cartItem));
-
                               widget.incrementCartItemCount();
-
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
