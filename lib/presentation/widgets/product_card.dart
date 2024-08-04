@@ -9,7 +9,8 @@ class ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 2.0,
+      color: Color(0xFF2A313F),
+      elevation: 5.0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8.0),
       ),
@@ -17,12 +18,15 @@ class ProductCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(8.0)),
-              child: Image.network(
-                product.imageUrl,
-                fit: BoxFit.cover,
-                width: double.infinity,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(8.0)),
+                child: Image.network(
+                  product.imageUrl,
+                  fit: BoxFit.contain,
+                  width: double.infinity,
+                ),
               ),
             ),
           ),
@@ -33,10 +37,10 @@ class ProductCard extends StatelessWidget {
               children: [
                 Text(
                   product.name,
-                  style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
                 SizedBox(height: 4.0),
-                Text('\$${product.price.toStringAsFixed(2)}'),
+                Text('\$${product.price.toStringAsFixed(2)}', style: TextStyle(color: Colors.white)),
               ],
             ),
           ),
