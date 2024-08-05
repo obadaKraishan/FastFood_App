@@ -1,3 +1,4 @@
+import 'package:fastfood_app/presentation/screens/profile/wallet_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fastfood_app/data/models/order_model.dart';
@@ -39,6 +40,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => ProfileScreen());
       case '/edit_profile':
         return MaterialPageRoute(builder: (_) => EditProfileScreen());
+      case '/wallet':
+        return MaterialPageRoute(builder: (_) => WalletProfileScreen());
       case '/notifications':
         return MaterialPageRoute(builder: (_) => NotificationsScreen());
       case '/security':
