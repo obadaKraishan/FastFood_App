@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
 
-class NotificationsScreen extends StatelessWidget {
+class NotificationsScreen extends StatefulWidget {
+  @override
+  _NotificationsScreenState createState() => _NotificationsScreenState();
+}
+
+class _NotificationsScreenState extends State<NotificationsScreen> {
+  bool _pushNotifications = true;
+  bool _emailNotifications = false;
+  bool _smsNotifications = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -12,18 +21,30 @@ class NotificationsScreen extends StatelessWidget {
         children: [
           SwitchListTile(
             title: Text('Push Notifications'),
-            value: true,
-            onChanged: (bool value) {},
+            value: _pushNotifications,
+            onChanged: (bool value) {
+              setState(() {
+                _pushNotifications = value;
+              });
+            },
           ),
           SwitchListTile(
             title: Text('Email Notifications'),
-            value: false,
-            onChanged: (bool value) {},
+            value: _emailNotifications,
+            onChanged: (bool value) {
+              setState(() {
+                _emailNotifications = value;
+              });
+            },
           ),
           SwitchListTile(
             title: Text('SMS Notifications'),
-            value: true,
-            onChanged: (bool value) {},
+            value: _smsNotifications,
+            onChanged: (bool value) {
+              setState(() {
+                _smsNotifications = value;
+              });
+            },
           ),
         ],
       ),
